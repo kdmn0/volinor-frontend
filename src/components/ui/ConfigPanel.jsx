@@ -1,0 +1,124 @@
+/**
+ * ConfigPanel.jsx
+ * Ana kullanıcı arayüzü (UI) kapsayıcısıdır. Ekranda görünen tüm düğmeleri, menüleri
+ * ve bilgi panellerini (SidebarMenu, CircularMenu, PageModal) bir araya getirerek
+ * son kullanıcıya sunar.
+ */
+import { motion, AnimatePresence } from "motion/react";
+import { useConfigStore } from "../../store/useConfigStore";
+import { PART_OPTIONS } from "../../data/parts";
+import { useState, useMemo } from "react";
+import { SidebarMenu } from "./SidebarMenu";
+import { CircularMenu } from "./CircularMenu";
+import { PageModal } from "./PageModal";
+
+export const ConfigPanel = () => {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  const selectedPart = useConfigStore((state) => state.selectedPart);
+  const setSelectedPart = useConfigStore((state) => state.setSelectedPart);
+  const activePage = useConfigStore((state) => state.activePage);
+  const setActivePage = useConfigStore((state) => state.setActivePage);
+  const selectedModel = useConfigStore((state) => state.selectedModel);
+  const showUI = useConfigStore((state) => state.showUI);
+
+  const partData = selectedPart ? PART_OPTIONS[selectedPart] : null;
+
+  const menuItems = useMemo(() => {
+    return selectedModel === "bee"
+      ? [
+          {
+            id: "subtitle1",
+            label: "MODELLEME",
+            subLabel: "3D MODEL & TASARIM",
+          },
+          { id: "subtitle2", label: "SİMÜLASYON", subLabel: "SENARYO & TEST" },
+          {
+            id: "subtitle3",
+            label: "İLERİ MALZEME",
+            subLabel: "KOMPOZİT & ANALİZ",
+          },
+          {
+            id: "subtitle4",
+            label: "YAPAY ZEKA",
+            subLabel: "ALGORİTMA & OTONOMİ",
+          },
+        ]
+      : [
+          { id: "subtitle5", label: "5", subLabel: "" },
+          { id: "subtitle6", label: "6", subLabel: "" },
+          { id: "subtitle7", label: "7", subLabel: "" },
+          { id: "subtitle8", label: "8", subLabel: "" },
+        ];
+  }, [selectedModel]);
+
+  return (
+    <AnimatePresence>
+      {showUI && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="absolute inset-0 pointer-events-none z-10">
+          
+          {/* Dairesel Seçim Menüsü */}
+          <CircularMenu 
+            isNavOpen={isNavOpen} 
+            setIsNavOpen={(val) => {
+              setIsNavOpen(val);
+              if (!val) setActivePage(null);
+            }} 
+            menuItems={menuItems} 
+            selectedPart={selectedPart} 
+            setSelectedPart={setSelectedPart} 
+          />
+
+          {/* Sol Açılır Menü */}
+          <SidebarMenu 
+            isNavOpen={isNavOpen} 
+            activePage={activePage} 
+            setActivePage={setActivePage} 
+          />
+
+          {/* Sağ Seçili Eleman Bilgi Paneli */}
+          <AnimatePresence>
+            {selectedPart && partData && (
+              <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 50, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="absolute bottom-6 left-4 right-4 md:top-1/2 md:bottom-auto md:right-24 md:left-auto md:-translate-y-1/2 md:w-80 bg-black/70 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 pointer-events-auto z-20">
+                <h2 className="text-lg md:text-xl font-light text-white mb-2 tracking-widest uppercase">
+                  {partData.name}
+                </h2>
+                <p className="text-gray-400 text-xs mb-2 md:mb-8 line-clamp-3 md:line-clamp-none">
+                  {partData.description}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Logo */}
+          <div className="absolute top-4 left-4 md:top-8 md:right-12 md:left-auto pointer-events-auto z-30 select-none flex flex-col items-start md:items-center">
+            <img
+              src="/logo_yazı.png"
+              alt="Volinor Logo"
+              className="h-10 md:h-16 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            />
+          </div>
+
+          {/* Tam Ekran Bilgi ve Form Modalı */}
+          <PageModal 
+            activePage={activePage} 
+            setActivePage={setActivePage} 
+            setIsNavOpen={setIsNavOpen}
+          />
+
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+

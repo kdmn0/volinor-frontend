@@ -1,0 +1,206 @@
+/**
+ * PageModal.jsx
+ * Menüden herhangi bir öğeye (Örn: Hakkımızda, İletişim) tıklandığında açılan
+ * tam ekran bilgilendirme panelidir. İletişim formu gibi etkileşimli öğeleri içerir.
+ */
+import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
+
+const dummyReferences = [
+  { id: 1, name: "Teknokent Savunma", logo: "TS" },
+  { id: 2, name: "Aero Dynamics", logo: "AD" },
+  { id: 3, name: "Global Aviation", logo: "GA" },
+  { id: 4, name: "Uzay Ajansı", logo: "UA" },
+  { id: 5, name: "TechFuture Ltd.", logo: "TF" },
+  { id: 6, name: "SkyInnovate", logo: "SI" },
+];
+
+export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [submitStatus, setSubmitStatus] = useState({
+    loading: false,
+    success: false,
+    error: null,
+  });
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitStatus({ loading: true, success: false, error: null });
+
+    try {
+      const response = await fetch("http://localhost:3000/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Gönderim başarısız oldu");
+
+      setSubmitStatus({ loading: false, success: true, error: null });
+      setFormData({ name: "", email: "", message: "" });
+
+      setTimeout(() => {
+        setSubmitStatus((s) => ({ ...s, success: false }));
+      }, 5000);
+    } catch (err) {
+      setSubmitStatus({
+        loading: false,
+        success: false,
+        error: "Mesaj gönderilirken bir hata oluştu.",
+      });
+    }
+  };
+
+  const isWidePage = activePage === "REFERANSLAR";
+
+  return (
+    <AnimatePresence>
+      {activePage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 bg-[#050b14] border-l border-[#00e5ff]/10 overflow-y-auto">
+          <motion.div
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
+            transition={{ delay: 0.1, type: "spring", damping: 25 }}
+            className={`w-full pointer-events-auto text-left md:my-auto ${isWidePage ? "max-w-7xl" : "max-w-3xl"}`}>
+            
+            {/* Mobil Geri Dön Butonu */}
+            <button 
+              onClick={() => setActivePage(null)}
+              className="md:hidden text-[#00e5ff]/80 hover:text-[#00e5ff] text-xs tracking-widest mb-6 flex items-center gap-2 min-h-[44px]"
+            >
+              <span className="text-lg">←</span> MENÜYE DÖN
+            </button>
+
+            <h1 className="text-2xl md:text-4xl font-light tracking-[0.2em] md:tracking-[0.3em] text-white mb-8 md:mb-12">
+              {activePage}
+            </h1>
+
+            <div className="text-white/60 text-base md:text-lg font-light leading-relaxed">
+              {activePage === "HAKKIMIZDA" && (
+                <p>
+                  Volinor, yenilikçi teknolojiler ve ileri mühendislik çözümleri
+                  ile geleceğin hava araçlarını tasarlayan öncü bir teknoloji
+                  şirketidir. Amacımız, sınırları zorlamak ve havacılık
+                  endüstrisinde yeni bir çağ başlatmaktır.
+                </p>
+              )}
+              {activePage === "İLETİŞİM" && (
+                <div className="flex flex-col md:flex-row gap-8 md:gap-12 text-left">
+                  <div className="flex-1">
+                    <h3 className="text-lg md:text-xl text-white mb-4 tracking-widest">
+                      BİZE ULAŞIN
+                    </h3>
+                    <p className="mb-4 leading-relaxed text-sm md:text-base">
+                      E-posta: info@volinor.com
+                      <br />
+                      Telefon: +90 555 123 4567
+                      <br />
+                      Adres: Teknokent, Ankara, Türkiye
+                    </p>
+                  </div>
+                  <div className="flex-1">
+                    <form
+                      className="flex flex-col gap-4"
+                      onSubmit={handleEmailSubmit}>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            name: e.target.value,
+                          })
+                        }
+                        placeholder="Adınız Soyadınız"
+                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 transition-colors text-sm min-h-[44px]"
+                        disabled={submitStatus.loading}
+                      />
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            email: e.target.value,
+                          })
+                        }
+                        placeholder="E-posta Adresiniz"
+                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 transition-colors text-sm min-h-[44px]"
+                        disabled={submitStatus.loading}
+                      />
+                      <textarea
+                        placeholder="Mesajınız"
+                        required
+                        value={formData.message}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            message: e.target.value,
+                          })
+                        }
+                        rows="4"
+                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 transition-colors resize-none text-sm min-h-[100px]"
+                        disabled={submitStatus.loading}></textarea>
+
+                      {submitStatus.success && (
+                        <div className="text-green-400 text-xs tracking-wider">
+                          Mesajınız başarıyla gönderildi. Teşekkürler!
+                        </div>
+                      )}
+                      {submitStatus.error && (
+                        <div className="text-red-400 text-xs tracking-wider">
+                          {submitStatus.error}
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submitStatus.loading}
+                        className={`bg-white text-black text-sm tracking-widest font-medium py-3 rounded-lg transition-colors mt-2 min-h-[44px] ${submitStatus.loading ? "opacity-50 cursor-not-allowed" : "hover:bg-white/80"}`}>
+                        {submitStatus.loading ? "GÖNDERİLİYOR..." : "GÖNDER"}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              )}
+              {activePage === "REFERANSLAR" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                  {dummyReferences.map((ref, index) => (
+                    <motion.div
+                      key={ref.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-row items-center justify-start gap-6 hover:bg-[#00e5ff]/5 hover:border-[#00e5ff]/50 transition-all duration-300 group cursor-pointer shadow-lg hover:shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+                      <div className="w-16 h-16 md:w-20 md:h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 flex items-center justify-center text-2xl sm:text-3xl font-bold text-white/40 group-hover:text-[#00e5ff] group-hover:border-[#00e5ff]/50 transition-all duration-300">
+                        {ref.logo}
+                      </div>
+                      <h4 className="text-white/80 text-lg md:text-xl tracking-widest font-medium group-hover:text-white transition-colors">
+                        {ref.name}
+                      </h4>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};

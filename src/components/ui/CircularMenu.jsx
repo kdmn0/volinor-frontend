@@ -7,28 +7,41 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
 
+// Referans masaüstü çözünürlüğü (bu boyutta ölçek = 1.0 olur)
+const BASE_WIDTH = 1920;
+const BASE_HEIGHT = 1080;
+
+// Menünün aşırı küçülüp büyümesini engelleyen sınırlar
+const MIN_SCALE = 0.65;
+const MAX_SCALE = 1.35;
+const MOBILE_BREAKPOINT = 768;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
 export const CircularMenu = ({ isNavOpen, setIsNavOpen, menuItems, selectedPart, setSelectedPart }) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [windowHeight, setWindowHeight] = useState(1080);
+  const [viewport, setViewport] = useState({ width: BASE_WIDTH, height: BASE_HEIGHT });
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setWindowHeight(window.innerHeight);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setIsMobile(width < MOBILE_BREAKPOINT);
+      setViewport({ width, height });
     };
     handleResize(); // İlk yüklemede çalıştır
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 1080p (standart masaüstü) yüksekliği referans alarak dinamik ölçekleme çarpanı
-  // Ekran küçüldükçe menü orantılı olarak küçülür, büyüdükçe büyür.
-  const scaleMultiplier = windowHeight / 1080;
+  // Hem genişliğe hem yüksekliğe göre ölçekle; KÜÇÜK olan oranı baz al ki
+  // hiçbir kenardan taşma olmasın. Ardından makul sınırlar içine sıkıştır.
+  const rawScale = Math.min(viewport.width / BASE_WIDTH, viewport.height / BASE_HEIGHT);
+  const scaleMultiplier = clamp(rawScale, MIN_SCALE, MAX_SCALE);
 
   const startAngle = -25;
   const endAngle = 25;
-  
-  // Sabit değerler yerine ekran yüksekliğine göre oranlanmış değerler
+
   const radius = 400 * scaleMultiplier;
   const circleSize = 800 * scaleMultiplier;
   const leftOffset = -550 * scaleMultiplier;

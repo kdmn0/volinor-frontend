@@ -7,6 +7,17 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
 
+// Referans masaüstü çözünürlüğü (bu boyutta ölçek = 1.0 olur)
+const BASE_WIDTH = 1920;
+const BASE_HEIGHT = 1080;
+
+// Menünün aşırı küçülüp büyümesini engelleyen sınırlar
+const MIN_SCALE = 0.9;
+const MAX_SCALE = 1.35;
+const MOBILE_BREAKPOINT = 768;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
 export const CircularMenu = ({
   isNavOpen,
   setIsNavOpen,
@@ -15,29 +26,37 @@ export const CircularMenu = ({
   setSelectedPart,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
-
-  const [scaleFactor, setScaleFactor] = useState(1);
+  const [viewport, setViewport] = useState({
+    width: BASE_WIDTH,
+    height: BASE_HEIGHT,
+  });
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-
-      // Responsive Scale Calculation
-      // Min: 720p (height: 720px), Max: 4K (height: 2160px), Base: 800px (daha büyük görünmesi için baz küçültüldü)
+      const width = window.innerWidth;
       const height = window.innerHeight;
-      const clampedHeight = Math.max(720, Math.min(height, 2160));
-      setScaleFactor(clampedHeight / 800);
+      setIsMobile(width < MOBILE_BREAKPOINT);
+      setViewport({ width, height });
     };
     handleResize(); // İlk yüklemede çalıştır
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Hem genişliğe hem yüksekliğe göre ölçekle; KÜÇÜK olan oranı baz al ki
+  // hiçbir kenardan taşma olmasın. Ardından makul sınırlar içine sıkıştır.
+  const rawScale = Math.min(
+    viewport.width / BASE_WIDTH,
+    viewport.height / BASE_HEIGHT,
+  );
+  const scaleMultiplier = clamp(rawScale, MIN_SCALE, MAX_SCALE);
+
   const startAngle = -25;
   const endAngle = 25;
-  const radius = 400 * scaleFactor;
-  const circleSize = 800 * scaleFactor;
-  const leftOffset = -550 * scaleFactor;
+
+  const radius = 400 * scaleMultiplier;
+  const circleSize = 800 * scaleMultiplier;
+  const leftOffset = -550 * scaleMultiplier;
 
   const [isPartsOpen, setIsPartsOpen] = useState(false);
 
@@ -174,7 +193,8 @@ export const CircularMenu = ({
                   style={{
                     left: `${x}px`,
                     top: `${y}px`,
-                    transform: "translate(-100%, -50%)",
+                    transform: `translate(-100%, -50%) scale(${scaleMultiplier})`,
+                    transformOrigin: "right center",
                   }}
                   onClick={() => setSelectedPart(isSelected ? null : item.id)}>
                   {/* Masaüstü Sol Aktif Çizgi */}
@@ -184,7 +204,7 @@ export const CircularMenu = ({
                     />
                   </div>
 
-                  <div className="flex flex-col items-start w-32 whitespace-nowrap">
+                  <div className="flex flex-col items-start mr-4 w-32 whitespace-nowrap">
                     <div
                       className={`text-sm font-semibold tracking-[0.15em] transition-all duration-300 ${isSelected ? "text-[#00e5ff] drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]" : "text-white/70 group-hover:text-white"}`}>
                       {item.label}
@@ -219,7 +239,12 @@ export const CircularMenu = ({
         style={
           isMobile
             ? { right: "1rem", top: "1rem" }
-            : { left: "250px", top: "50%", transform: "translate(-50%, -50%)" }
+            : {
+                left: `${250 * scaleMultiplier}px`,
+                top: "50%",
+                transform: `translate(-50%, -50%) scale(${scaleMultiplier})`,
+                transformOrigin: "center center",
+              }
         }
         onClick={() => setIsNavOpen(!isNavOpen)}>
         <div

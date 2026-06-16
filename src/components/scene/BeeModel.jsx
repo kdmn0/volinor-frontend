@@ -22,12 +22,121 @@ export function BeeModel(props) {
   const wingPhase = useRef(0);
   const currentWingSpeed = useRef(10);
 
-  // Orijinal materyalleri sakla
+  // Orijinal materyalleri sakla ve renk ayarlamaları yap
   const originalMaterials = useMemo(() => {
     const materials = {};
     scene.traverse((child) => {
       if (child.isMesh) {
-        materials[child.uuid] = child.material;
+        // Materyali klonlayarak ayrı bir kopyasını oluşturuyoruz.
+        // Böylece varsayılan renklerini serbestçe değiştirebiliriz.
+        const mat = child.material.clone();
+
+        // Mesh'in "empty_55" veya "empty_58" grubu altında olup olmadığını kontrol et
+        let isGradientTarget = false;
+        let currentParent = child.parent;
+
+        while (currentParent) {
+          if (
+            currentParent.name &&
+            (currentParent.name.includes("55") ||
+              currentParent.name.includes("58"))
+          ) {
+            isGradientTarget = true;
+            break;
+          }
+          currentParent = currentParent.parent;
+        }
+
+        // Beyaz yapmak istediğiniz materyaller:
+        const whiteParts = [
+          "Material_25",
+          "Material_21"
+        ];
+
+        // Gri yapmak istediğiniz parçaların veya materyallerin isimleri:
+        const grayParts = [
+          "Material_0",
+          "Material_15",
+          "Material_17",
+          "Material_18",
+          "Material_19",
+          "Material_22",
+          "Material_26",
+          "Material_53",
+          "Material_56",
+        ];
+
+        // Eğer parça (mesh) veya materyal ismi yukarıdaki listelerdeyse onu ilgili renge boya:
+        const isWhite = whiteParts.some(
+          (name) =>
+            child.name.includes(name) || (mat.name && mat.name.includes(name)),
+        );
+
+        const isGray = grayParts.some(
+          (name) =>
+            child.name.includes(name) || (mat.name && mat.name.includes(name)),
+        );
+
+        if (isWhite) {
+          mat.color.set("#FFFFFF"); // Beyaz
+        } else if (isGray) {
+          mat.color.set("#A0A0A0"); // Gri (İstediğiniz tonu ayarlayabilirsiniz)
+        }
+        // --------------------------------------------------------
+
+        // Eğer bu parça empty_55 veya empty_58 altındaysa VE gri/beyaz olarak işaretlenmediyse ona gradyanı uygula
+        if (isGradientTarget && !isGray && !isWhite) {
+          // Modelin kendi geometrisinin alt ve üst sınırlarını hesapla
+          child.geometry.computeBoundingBox();
+          const bbox = child.geometry.boundingBox;
+
+          // Çok küçük bir ihtimalle bbox gelmezse varsayılan değer veriyoruz
+          const minY = bbox ? bbox.min.y : -1.0;
+          const maxY = bbox ? bbox.max.y : 1.0;
+
+          // Materyal render edilmeden hemen önce (shader compile aşamasında) araya giriyoruz
+          mat.onBeforeCompile = (shader) => {
+            // Uniform değerlerimizi (dışarıdan verdiğimiz değişkenler) ekliyoruz
+            shader.uniforms.colorTop = { value: new THREE.Color("#7A00C6") }; // Mor (Üst)
+            shader.uniforms.colorBottom = { value: new THREE.Color("#23D5F1") }; // Mavi (Alt)
+            shader.uniforms.bboxMin = { value: minY };
+            shader.uniforms.bboxMax = { value: maxY };
+
+            // 1. Vertex Shader (Nokta verileri): Pozisyonu fragment shader'a gönder
+            shader.vertexShader = `
+              varying vec3 vLocalPosition;
+              ${shader.vertexShader}
+            `.replace(
+              `#include <begin_vertex>`,
+              `#include <begin_vertex>
+               vLocalPosition = position;
+              `,
+            );
+
+            // 2. Fragment Shader (Piksel verileri): Yüksekliğe göre renkleri karıştır
+            shader.fragmentShader = `
+              uniform vec3 colorTop;
+              uniform vec3 colorBottom;
+              uniform float bboxMin;
+              uniform float bboxMax;
+              varying vec3 vLocalPosition;
+              ${shader.fragmentShader}
+            `.replace(
+              `vec4 diffuseColor = vec4( diffuse, opacity );`,
+              `
+              // Y koordinatına göre 0.0 (alt) ile 1.0 (üst) arası bir oran (ratio) buluyoruz
+              float mixRatio = clamp((vLocalPosition.y - bboxMin) / (bboxMax - bboxMin), 0.0, 1.0);
+              
+              // Alt renkten üst renge geçiş yap
+              vec3 gradientColor = mix(colorBottom, colorTop, mixRatio);
+              
+              vec4 diffuseColor = vec4( gradientColor, opacity );
+              `,
+            );
+          };
+        }
+
+        materials[child.uuid] = mat;
       }
     });
     return materials;
@@ -80,7 +189,8 @@ export function BeeModel(props) {
     const elapsedTime = clock.getElapsedTime();
 
     // --- Kanat Çırpma Hızını Kademeli Artırma ---
-    const targetWingSpeed = (selectedPart === "subtitle2" || selectedPart === "subtitle4") ? 80 : 10;
+    const targetWingSpeed =
+      selectedPart === "subtitle2" || selectedPart === "subtitle4" ? 80 : 10;
     // Hızı yumuşak bir şekilde (lerp) hedef hıza çekiyoruz
     currentWingSpeed.current = THREE.MathUtils.lerp(
       currentWingSpeed.current,
@@ -95,8 +205,12 @@ export function BeeModel(props) {
       const TWO_PI = Math.PI * 2;
       const k = Math.round((wingPhase.current - PI_2) / TWO_PI);
       const targetPhase = PI_2 + k * TWO_PI;
-      
-      wingPhase.current = THREE.MathUtils.lerp(wingPhase.current, targetPhase, 5 * delta);
+
+      wingPhase.current = THREE.MathUtils.lerp(
+        wingPhase.current,
+        targetPhase,
+        5 * delta,
+      );
     } else {
       // Fazı (phase) güncel hız üzerinden biriktiriyoruz (Zaman atlamalarını önlemek için)
       wingPhase.current += currentWingSpeed.current * delta;
@@ -129,11 +243,12 @@ export function BeeModel(props) {
 
         if (dodgeY !== 0) {
           // Yatay engel var, sadece Z ekseni bozulmadan yukarıya doğru yüksel
-          targetY = 0.8; 
+          targetY = 0.8;
         } else if (dodgeX !== 0) {
           // Dikey engel var, sağa/sola kaç
           targetX = dodgeX > 0.1 ? -0.8 : dodgeX < -0.1 ? 0.8 : 0;
-          targetRotZ = dodgeX > 0.1 ? Math.PI / 8 : dodgeX < -0.1 ? -Math.PI / 8 : 0;
+          targetRotZ =
+            dodgeX > 0.1 ? Math.PI / 8 : dodgeX < -0.1 ? -Math.PI / 8 : 0;
         }
 
         // --- Rüzgar Efekti (Hafif Salınım) ---

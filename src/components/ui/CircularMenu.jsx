@@ -9,19 +9,29 @@ import { useState, useEffect } from "react";
 
 export const CircularMenu = ({ isNavOpen, setIsNavOpen, menuItems, selectedPart, setSelectedPart }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(1080);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setWindowHeight(window.innerHeight);
+    };
     handleResize(); // İlk yüklemede çalıştır
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 1080p (standart masaüstü) yüksekliği referans alarak dinamik ölçekleme çarpanı
+  // Ekran küçüldükçe menü orantılı olarak küçülür, büyüdükçe büyür.
+  const scaleMultiplier = windowHeight / 1080;
+
   const startAngle = -25;
   const endAngle = 25;
-  const radius = 400;
-  const circleSize = 800;
-  const leftOffset = -550;
+  
+  // Sabit değerler yerine ekran yüksekliğine göre oranlanmış değerler
+  const radius = 400 * scaleMultiplier;
+  const circleSize = 800 * scaleMultiplier;
+  const leftOffset = -550 * scaleMultiplier;
 
   const [isPartsOpen, setIsPartsOpen] = useState(false);
 
@@ -140,7 +150,8 @@ export const CircularMenu = ({ isNavOpen, setIsNavOpen, menuItems, selectedPart,
                   style={{
                     left: `${x}px`,
                     top: `${y}px`,
-                    transform: "translate(-100%, -50%)",
+                    transform: `translate(-100%, -50%) scale(${scaleMultiplier})`,
+                    transformOrigin: "right center",
                   }}
                   onClick={() => setSelectedPart(isSelected ? null : item.id)}>
                   
@@ -178,7 +189,12 @@ export const CircularMenu = ({ isNavOpen, setIsNavOpen, menuItems, selectedPart,
         style={
           isMobile
             ? { right: "1rem", top: "1rem" }
-            : { left: "250px", top: "50%", transform: "translate(-50%, -50%)" }
+            : { 
+                left: `${250 * scaleMultiplier}px`, 
+                top: "50%", 
+                transform: `translate(-50%, -50%) scale(${scaleMultiplier})`,
+                transformOrigin: "center center"
+              }
         }
         onClick={() => setIsNavOpen(!isNavOpen)}>
         <div className={`w-6 h-[1px] bg-white transition-all duration-300 origin-center ${isNavOpen ? "rotate-45 translate-y-[7px]" : "group-hover:w-8 group-hover:bg-white"}`} />

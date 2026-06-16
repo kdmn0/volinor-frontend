@@ -60,18 +60,18 @@ export const CircularMenu = ({
 
   // Font boyutu layout kadar hızlı küçülmez: 1'den sapma yarı hızda uygulanır.
   // sm=0.88 → fontSm=0.94, sm=1.0 → fontSm=1.0, sm=1.35 → fontSm=1.175
-  const fontSm = 1 + (sm - 1) * 0.05;
+  const fontSm = 1 + (sm - 1) * 0.5;
 
   // Masaüstü öğe boyutları — CSS scale() kullanılmaz, gerçek piksel değerleri hesaplanır.
   // Math.max() ile her boyuta katı bir taban sınır eklendi; hizalama bozulmaz.
-  const nodeSize    = Math.max(36, Math.round(40  * sm));
-  const dotLg       = Math.max(10, Math.round(12  * sm));
-  const dotSm       = Math.max(5,  Math.round(6   * sm));
-  const textW       = Math.max(112, Math.round(128 * sm));
-  const textMR      = Math.max(12,  Math.round(16  * sm));
-  const labelPx     = Math.max(12,  Math.round(14  * fontSm));
-  const subPx       = Math.max(9,   Math.round(9   * fontSm));
-  const menuLabelPx = Math.max(9,   Math.round(10  * fontSm));
+  const nodeSize    = Math.max(44, Math.round(50  * sm));
+  const dotLg       = Math.max(12, Math.round(14  * sm));
+  const dotSm       = Math.max(6,  Math.round(7   * sm));
+  const textW       = Math.max(170, Math.round(190 * sm));
+  const textMR      = Math.max(16,  Math.round(20  * sm));
+  const labelPx     = Math.max(16,  Math.round(21  * fontSm));
+  const subPx       = Math.max(13,  Math.round(15  * fontSm));
+  const menuLabelPx = Math.max(13,  Math.round(15  * fontSm));
   const activeLineH = Math.max(60,  Math.round(80  * sm));
   const hoverLineH  = Math.max(36,  Math.round(48  * sm));
   const vertLineH   = Math.max(48,  Math.round(64  * sm));

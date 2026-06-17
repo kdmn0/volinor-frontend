@@ -11,8 +11,10 @@ import { useState, useMemo } from "react";
 import { SidebarMenu } from "./SidebarMenu";
 import { CircularMenu } from "./CircularMenu";
 import { PageModal } from "./PageModal";
+import { useNavigate } from "react-router-dom";
 
 export const ConfigPanel = () => {
+  const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const selectedPart = useConfigStore((state) => state.selectedPart);
@@ -29,26 +31,29 @@ export const ConfigPanel = () => {
       ? [
           {
             id: "subtitle1",
+            url: "/modelleme",
             label: "MODELLEME",
             subLabel: "3D MODEL & TASARIM",
           },
-          { id: "subtitle2", label: "SİMÜLASYON", subLabel: "SENARYO & TEST" },
+          { id: "subtitle2", url: "/simulasyon", label: "SİMÜLASYON", subLabel: "SENARYO & TEST" },
           {
             id: "subtitle3",
+            url: "/ileri-malzeme",
             label: "İLERİ MALZEME",
             subLabel: "KOMPOZİT & ANALİZ",
           },
           {
             id: "subtitle4",
+            url: "/yapay-zeka",
             label: "YAPAY ZEKA",
             subLabel: "ALGORİTMA & OTONOMİ",
           },
         ]
       : [
-          { id: "subtitle5", label: "5", subLabel: "" },
-          { id: "subtitle6", label: "6", subLabel: "" },
-          { id: "subtitle7", label: "7", subLabel: "" },
-          { id: "subtitle8", label: "8", subLabel: "" },
+          { id: "subtitle5", url: "/", label: "5", subLabel: "" },
+          { id: "subtitle6", url: "/", label: "6", subLabel: "" },
+          { id: "subtitle7", url: "/", label: "7", subLabel: "" },
+          { id: "subtitle8", url: "/", label: "8", subLabel: "" },
         ];
   }, [selectedModel]);
 
@@ -66,7 +71,10 @@ export const ConfigPanel = () => {
             isNavOpen={isNavOpen}
             setIsNavOpen={(val) => {
               setIsNavOpen(val);
-              if (!val) setActivePage(null);
+              if (!val) {
+                navigate("/");
+                setActivePage(null);
+              }
             }}
             menuItems={menuItems}
             selectedPart={selectedPart}
@@ -104,7 +112,11 @@ export const ConfigPanel = () => {
             <img
               src="/logo_yazı.png"
               alt="Volinor Logo"
-              className="h-10 md:h-16 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+              onClick={() => {
+                navigate("/");
+                setIsNavOpen(false); // Eğer menü açıksa kapatarak dönmesi için
+              }}
+              className="h-10 md:h-16 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-80 transition-opacity"
             />
           </div>
 

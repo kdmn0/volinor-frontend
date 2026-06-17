@@ -6,6 +6,7 @@
  */
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Referans masaüstü çözünürlüğü (bu boyutta ölçek = 1.0 olur)
 const BASE_WIDTH = 1920;
@@ -25,6 +26,7 @@ export const CircularMenu = ({
   selectedPart,
   setSelectedPart,
 }) => {
+  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [viewport, setViewport] = useState({
     width: BASE_WIDTH,
@@ -143,6 +145,11 @@ export const CircularMenu = ({
                     key={item.id}
                     className="relative flex items-center cursor-pointer group min-h-[44px] z-10"
                     onClick={() => {
+                      if (isSelected) {
+                        navigate("/");
+                      } else {
+                        navigate(item.url);
+                      }
                       setSelectedPart(isSelected ? null : item.id);
                       if (!isSelected) setIsPartsOpen(false);
                     }}>
@@ -195,7 +202,14 @@ export const CircularMenu = ({
                     transform: "translate(-100%, -50%)",
                     minHeight: "44px",
                   }}
-                  onClick={() => setSelectedPart(isSelected ? null : item.id)}>
+                  onClick={() => {
+                    if (isSelected) {
+                      navigate("/");
+                    } else {
+                      navigate(item.url);
+                    }
+                    setSelectedPart(isSelected ? null : item.id);
+                  }}>
 
                   {/* Sol Aktif Çizgi */}
                   <div

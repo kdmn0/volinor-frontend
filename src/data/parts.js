@@ -25,22 +25,6 @@ export const PART_OPTIONS = {
     description:
       "Otonom sistemler ve akıllı platformlar için yapay zeka tabanlı algoritmalar geliştiriyoruz. Görüntü işleme, karar destek ve otonom kontrol gibi alanlarda, savunma sanayinin geleceğine yön veren yenilikçi çözümler üretiyoruz.",
   },
-  subtitle5: {
-    name: "5",
-    description: "5.5",
-  },
-  subtitle6: {
-    name: "6",
-    description: "6.6",
-  },
-  subtitle7: {
-    name: "7",
-    description: "7.7",
-  },
-  subtitle8: {
-    name: "8",
-    description: "8.8",
-  },
 };
 
 export const DEFAULT_CONFIG = {
@@ -48,8 +32,4 @@ export const DEFAULT_CONFIG = {
   subtitle2: {},
   subtitle3: {},
   subtitle4: {},
-  subtitle5: {},
-  subtitle6: {},
-  subtitle7: {},
-  subtitle8: {},
 };

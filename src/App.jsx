@@ -9,12 +9,16 @@ import { ConfigPanel } from './components/ui/ConfigPanel';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { useConfigStore } from './store/useConfigStore';
 import { AnimatePresence, motion } from 'motion/react';
+import { BrowserRouter } from 'react-router-dom';
+import { RouteManager } from './components/RouteManager';
 
 function App() {
   const selectedPart = useConfigStore((state) => state.selectedPart);
 
   return (
-    <div className="w-full h-screen overflow-hidden bg-transparent font-sans selection:bg-white selection:text-black">
+    <BrowserRouter>
+      <RouteManager />
+      <div className="w-full h-screen overflow-hidden bg-transparent font-sans selection:bg-white selection:text-black">
       <LoadingScreen />
       <ConfigPanel />
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -95,6 +99,7 @@ function App() {
         </div>
       </div>
     </div>
+    </BrowserRouter>
   );
 }
 

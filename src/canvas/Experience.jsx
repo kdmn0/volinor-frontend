@@ -82,7 +82,7 @@ export const Experience = () => {
           enablePan={false}
           enableZoom={true}
           minDistance={1}
-          maxDistance={50}
+          maxDistance={4}
           maxPolarAngle={Math.PI}
           autoRotate={true}
           autoRotateSpeed={1}

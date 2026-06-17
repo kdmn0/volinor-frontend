@@ -5,6 +5,8 @@
  */
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 
 const References = [
   { id: 1, name: "Kara Kuvvetleri Komutanlığı", logo: "/logo/kara.png" },
@@ -12,11 +14,22 @@ const References = [
   { id: 3, name: "TÜBİTAK MAM", logo: "/logo/tubitak.png" },
   { id: 4, name: "Makine ve Kimya Endüstrisi A.Ş", logo: "/logo/mke.png" },
   { id: 5, name: "Ermaksan ", logo: "/logo/ermaksan.png" },
-  { id: 6, name: "LenoWorks", logo: "/logo/lenoworks.png" },
-  { id: 7, name: "Lingua Yayıncılık", logo: "/logo/lingua.png" },
+  { id: 6, name: "Lingua Yayıncılık", logo: "/logo/lingua.png" },
+  { id: 7, name: "LenoWorks", logo: "/logo/lenoworks.png" },
 ];
 
+const PAGE_TITLES = {
+  hakkimizda: "HAKKIMIZDA",
+  urunlerimiz: "ÜRÜNLERİMİZ",
+  "sertifika-ve-patentler": "SERTİFİKA VE PATENTLER",
+  referanslar: "REFERANSLAR",
+  iletisim: "İLETİŞİM",
+  "model-kutuphanesi": "MODEL KÜTÜPHANESİ",
+  "video-kutuphanesi": "VİDEO KÜTÜPHANESİ",
+};
+
 export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -60,7 +73,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
     }
   };
 
-  const isWidePage = activePage === "REFERANSLAR";
+  const isWidePage = activePage === "referanslar";
 
   return (
     <AnimatePresence>
@@ -70,6 +83,19 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 bg-[#080f1e] border-l border-[#00e5ff]/10 overflow-y-auto">
+          <Helmet>
+            <title>
+              {typeof activePage === "string"
+                ? activePage.replace(/-/g, " ").toUpperCase()
+                : activePage}{" "}
+              - Volinor
+            </title>
+            <meta
+              name="description"
+              content={`${activePage} detaylarını Volinor web sitesinde inceleyin.`}
+            />
+          </Helmet>
+
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -78,17 +104,20 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
             className={`w-full pointer-events-auto text-left md:my-auto ${isWidePage ? "max-w-7xl" : "max-w-3xl"}`}>
             {/* Mobil Geri Dön Butonu */}
             <button
-              onClick={() => setActivePage(null)}
+              onClick={() => {
+                navigate("/");
+                setActivePage(null);
+              }}
               className="md:hidden text-[#00e5ff]/80 hover:text-[#00e5ff] text-xs tracking-widest mb-6 flex items-center gap-2 min-h-[44px]">
               <span className="text-lg">←</span> MENÜYE DÖN
             </button>
 
             <h1 className="text-2xl md:text-4xl font-light tracking-[0.2em] md:tracking-[0.3em] text-white mb-8 md:mb-12">
-              {activePage}
+              {PAGE_TITLES[activePage] || activePage}
             </h1>
 
             <div className="text-white/60 text-base md:text-lg font-light leading-relaxed">
-              {activePage === "HAKKIMIZDA" && (
+              {activePage === "hakkimizda" && (
                 <p>
                   Volinor, yenilikçi teknolojiler ve ileri mühendislik çözümleri
                   ile geleceğin hava araçlarını tasarlayan öncü bir teknoloji
@@ -96,7 +125,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                   endüstrisinde yeni bir çağ başlatmaktır.
                 </p>
               )}
-              {activePage === "İLETİŞİM" && (
+              {activePage === "iletisim" && (
                 <div className="flex flex-col md:flex-row gap-8 md:gap-12 text-left">
                   <div className="flex-1">
                     <h3 className="text-lg md:text-xl text-white mb-4 tracking-widest">
@@ -177,7 +206,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                   </div>
                 </div>
               )}
-              {activePage === "REFERANSLAR" && (
+              {activePage === "referanslar" && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 items-center justify-items-center mt-8">
                   {References.map((ref, index) => (
                     <motion.div

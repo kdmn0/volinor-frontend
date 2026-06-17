@@ -88,7 +88,7 @@ export const ConfigPanel = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 50, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="absolute bottom-6 left-4 right-4 md:top-1/2 md:bottom-auto md:right-24 md:left-auto md:-translate-y-1/2 md:w-80 bg-black/70 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 pointer-events-auto z-20">
+                className="absolute bottom-6 left-4 right-4 md:top-1/2 md:bottom-auto md:right-24 md:left-auto md:-translate-y-1/2 md:w-80 bg-[#070d1a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 pointer-events-auto z-20">
                 <h2 className="text-lg md:text-xl font-light text-white mb-2 tracking-widest uppercase">
                   {partData.name}
                 </h2>

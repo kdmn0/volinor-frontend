@@ -85,8 +85,8 @@ export const LoadingScreen = () => {
             alignItems: "center",
             justifyContent: "center",
             color: "#fff",
-            backgroundColor: "#020813",
-            backgroundImage: `radial-gradient(circle at 50% 50%, #051424 0%, #010409 100%)`,
+            backgroundColor: "#070d1a",
+            backgroundImage: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(13, 31, 60, 0.9) 0%, rgba(3, 8, 16, 0) 70%)`,
           }}>
           {/* MagicRings arka plan efekti */}
           <div

@@ -153,7 +153,7 @@ export const CircularMenu = ({
                         className={`absolute w-[2px] h-14 bg-gradient-to-b from-transparent via-[#00e5ff] to-transparent transition-opacity duration-300 ${isSelected ? "opacity-100 shadow-[0_0_10px_#00e5ff]" : "opacity-0"}`}
                       />
                       <div
-                        className={`w-10 h-10 rounded-full border-[1px] transition-all duration-300 bg-[#020813] ${isSelected ? "border-[#00e5ff] shadow-[0_0_15px_rgba(0,229,255,0.3)] scale-110" : "border-white/20 group-hover:border-white/50 scale-90"}`}
+                        className={`w-10 h-10 rounded-full border-[1px] transition-all duration-300 bg-[#070d1a] ${isSelected ? "border-[#00e5ff] shadow-[0_0_15px_rgba(0,229,255,0.3)] scale-110" : "border-white/20 group-hover:border-white/50 scale-90"}`}
                       />
                       <div
                         className={`absolute rounded-full transition-all duration-300 ${isSelected ? "w-3 h-3 bg-white shadow-[0_0_15px_#00e5ff,0_0_30px_#00e5ff]" : "w-1.5 h-1.5 bg-white/60 group-hover:bg-white/90 group-hover:shadow-[0_0_10px_rgba(255,255,255,0.5)]"}`}
@@ -249,7 +249,7 @@ export const CircularMenu = ({
                       style={{ height: `${vertLineH}px` }}
                     />
                     <div
-                      className={`rounded-full border-[1px] transition-all duration-300 bg-[#020813] ${
+                      className={`rounded-full border-[1px] transition-all duration-300 bg-[#070d1a] ${
                         isSelected
                           ? "border-[#00e5ff] bg-[#00e5ff]/10 shadow-[0_0_15px_rgba(0,229,255,0.3)] scale-110"
                           : "border-white/20 group-hover:border-white/50 group-hover:bg-white/5 scale-90"

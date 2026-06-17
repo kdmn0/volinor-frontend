@@ -69,7 +69,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 bg-[#050b14] border-l border-[#00e5ff]/10 overflow-y-auto">
+          className="absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 bg-[#080f1e] border-l border-[#00e5ff]/10 overflow-y-auto">
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}

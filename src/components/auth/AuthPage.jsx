@@ -1,31 +1,47 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import './AuthPage.css';
 
 const AuthPage = () => {
     const [view, setView] = useState('login'); // 'login' or 'register'
+    const [authMessage, setAuthMessage] = useState(''); // Sistem mesajı için state
+    const navigate = useNavigate();
 
     const handleGoogleAuth = useGoogleLogin({
-        flow: 'auth-code', // Backend ile Client Secret kullanarak güvenli iletişim için 'auth-code' akışı
-        onSuccess: async (codeResponse) => {
-            console.log('Google Auth başarılı, alınan Code:', codeResponse.code);
-            
-            // Backend ile iletişim örneği:
-            // try {
-            //     const response = await fetch('http://localhost:3000/api/auth/google', {
-            //         method: 'POST',
-            //         headers: { 'Content-Type': 'application/json' },
-            //         body: JSON.stringify({ code: codeResponse.code })
-            //     });
-            //     const data = await response.json();
-            //     console.log('Backend yanıtı:', data);
-            //     // Giriş başarılıysa yönlendirme yapılabilir vb.
-            // } catch (error) {
-            //     console.error('Backend ile iletişim hatası:', error);
-            // }
+        onSuccess: async (googleResponse) => {
+            try {
+                // 1. Google'dan gelen bileti bizim Django'ya fırlatıyoruz (BAĞLANTI BURADA KURULUYOR)
+                const djangoCevap = await axios.post('http://localhost:8000/api/auth/google/', {
+                    access_token: googleResponse.access_token,
+                });
+
+                // 2. Eğer buraya geldiyse kod 200 OK dönmüştür, adam VIP'dir.
+                console.log("VIP Biletler Alındı:", djangoCevap.data);
+                setAuthMessage("Giriş Başarılı! Yönlendiriliyorsunuz...");
+                
+                // Tokenları localStorage'a kaydetme örneği
+                if (djangoCevap.data.access_token) {
+                    localStorage.setItem('access_token', djangoCevap.data.access_token);
+                }
+                
+                // Ana sayfaya yönlendir
+                setTimeout(() => {
+                    navigate('/');
+                }, 1500);
+
+            } catch (hata) {
+                console.error("Google Auth hatası:", hata);
+                // 3. Django adama kapıyı kapattıysa (Örn: 403 Onay Bekliyor)
+                if (hata.response && hata.response.status === 403) {
+                    setAuthMessage("Hesabınız yönetici onayını bekliyor. Lütfen daha sonra tekrar deneyin.");
+                } else {
+                    setAuthMessage("Giriş yapılırken bir hata oluştu.");
+                }
+            }
         },
-        onError: errorResponse => console.error('Google Login hatası:', errorResponse),
+        onError: () => setAuthMessage('Google ile bağlantı kurulamadı.'),
     });
 
     const handleLogin = (e) => {
@@ -74,7 +90,16 @@ const AuthPage = () => {
                                 <p>Hesabınıza giriş yaparak devam edin.</p>
                             </div>
 
-
+                            {authMessage && (
+                                <div style={{
+                                    padding: '10px', marginBottom: '15px', borderRadius: '6px', fontSize: '0.9rem', textAlign: 'center',
+                                    backgroundColor: authMessage.includes('Başarılı') ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                    color: authMessage.includes('Başarılı') ? '#22c55e' : '#ef4444',
+                                    border: `1px solid ${authMessage.includes('Başarılı') ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`
+                                }}>
+                                    {authMessage}
+                                </div>
+                            )}
 
                             <form onSubmit={handleLogin} className="auth-form">
                                 <div className="auth-input-group">
@@ -119,7 +144,16 @@ const AuthPage = () => {
                                 <p>Platforma katılmak için bilgilerinizi girin.</p>
                             </div>
 
-
+                            {authMessage && (
+                                <div style={{
+                                    padding: '10px', marginBottom: '15px', borderRadius: '6px', fontSize: '0.9rem', textAlign: 'center',
+                                    backgroundColor: authMessage.includes('Başarılı') ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                    color: authMessage.includes('Başarılı') ? '#22c55e' : '#ef4444',
+                                    border: `1px solid ${authMessage.includes('Başarılı') ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`
+                                }}>
+                                    {authMessage}
+                                </div>
+                            )}
 
                             <form onSubmit={handleRegister} className="auth-form">
                                 <div className="auth-input-group">

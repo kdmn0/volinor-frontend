@@ -46,7 +46,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
     setSubmitStatus({ loading: true, success: false, error: null });
 
     try {
-      const response = await fetch("http://localhost:3000/api/send-email", {
+      const response = await fetch("http://localhost:8000/api/send-email/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

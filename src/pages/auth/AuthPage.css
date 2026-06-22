@@ -376,3 +376,175 @@
     transform: scaleX(1);
     transform-origin: left;
 }
+
+/* Agreement Checkbox */
+.auth-agreement-group {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--auth-text-muted);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.auth-checkbox-label input[type="checkbox"] {
+    appearance: none;
+    background-color: var(--auth-bg-surface);
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 1px solid var(--auth-border-subtle);
+    border-radius: 0.25em;
+    display: grid;
+    place-content: center;
+    transition: all var(--auth-transition-fast);
+    flex-shrink: 0;
+    margin-top: 0.15em;
+    cursor: pointer;
+}
+
+.auth-checkbox-label input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em white;
+    background-color: transparent;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.auth-checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--auth-accent-primary);
+    border-color: var(--auth-accent-primary);
+}
+
+.auth-checkbox-label input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+.auth-checkbox-label a {
+    color: var(--auth-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.auth-checkbox-label a:hover {
+    color: var(--auth-accent-secondary);
+}
+
+/* Agreement Modal */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: authModalFadeIn 0.2s ease-out;
+}
+
+@keyframes authModalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.auth-modal-content {
+    background-color: var(--auth-bg-surface);
+    border: 1px solid var(--auth-border-subtle);
+    border-radius: var(--auth-radius-lg);
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: authModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authModalSlideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--auth-border-subtle);
+}
+
+.auth-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--auth-text-main);
+}
+
+.auth-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--auth-text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--auth-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--auth-transition-fast);
+}
+
+.auth-modal-close:hover {
+    color: var(--auth-text-main);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.auth-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--auth-text-muted);
+}
+
+.auth-modal-body p {
+    margin-bottom: 1rem;
+}
+
+.auth-modal-body p:last-child {
+    margin-bottom: 0;
+}
+
+.auth-modal-body strong {
+    color: var(--auth-text-main);
+    font-weight: 500;
+}
+
+.auth-modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--auth-border-subtle);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.auth-modal-footer .auth-submit-btn {
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    margin: 0;
+}

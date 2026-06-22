@@ -112,22 +112,40 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
               <span className="text-lg">←</span> MENÜYE DÖN
             </button>
 
-            <h1 className={`font-display text-3xl md:text-5xl font-light tracking-[0.25em] md:tracking-[0.35em] text-white ${
-              activePage === "iletisim" || activePage === "model-kutuphanesi"
-                ? "sr-only"
-                : "mb-8 md:mb-12"
-            }`}>
+            <h1
+              className={`font-display text-3xl md:text-5xl font-light tracking-[0.25em] md:tracking-[0.35em] text-white ${
+                activePage === "iletisim" || activePage === "model-kutuphanesi"
+                  ? "sr-only"
+                  : "mb-4 md:mb-6"
+              }`}>
               {PAGE_TITLES[activePage] || activePage}
             </h1>
 
             <div className="text-white/60 text-base md:text-lg font-light leading-relaxed">
               {activePage === "hakkimizda" && (
-                <p>
-                  Volinor, yenilikçi teknolojiler ve ileri mühendislik çözümleri
-                  ile geleceğin hava araçlarını tasarlayan öncü bir teknoloji
-                  şirketidir. Amacımız, sınırları zorlamak ve havacılık
-                  endüstrisinde yeni bir çağ başlatmaktır.
-                </p>
+                <div className="flex flex-col gap-4">
+                  <p>
+                    Volinor Savunma ve Teknoloji A.Ş. savunma sanayii ve ileri
+                    teknoloji alanlarında yenilikçi ürünler sunmak ve Ar-Ge
+                    Çözümleri sağlamak amacıyla yazılım, tasarım ve araştırma
+                    merkezi olarak Ankara'da kurulmuştur.
+                  </p>
+                  <p>
+                    VOLİNOR A.Ş. modelleme ve simülasyon, analiz ve ürün
+                    geliştirme hizmetleri sağlar. Bu kapsamda;
+                  </p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li>Konsept tasarımı,</li>
+                    <li>
+                      Ürünlerinizin yurt içi ve dışında daha iyi anlaşılmasını,
+                      tanıtılmasını ve kullanılmasını sağlayacak, saygınlığını
+                      artıracak 3D animasyon ve simülasyon videoları,
+                    </li>
+                    <li>Uzaktan bakım ve verimlilik uygulamaları,</li>
+                    <li>Eğitim simülatörleri ve simülasyon yazılımları,</li>
+                    <li>Digital Twin uygulamaları alanlarında hizmet sunar</li>
+                  </ul>
+                </div>
               )}
               {activePage === "iletisim" && (
                 <div className="flex flex-col gap-8 md:gap-10 text-left">

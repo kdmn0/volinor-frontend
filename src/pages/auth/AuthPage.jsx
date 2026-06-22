@@ -21,6 +21,9 @@ const AuthPage = () => {
     const [registerPassword2, setRegisterPassword2] = useState('');
     const [registerStatus, setRegisterStatus] = useState('idle');
 
+    const [agreementChecked, setAgreementChecked] = useState(false);
+    const [showAgreementModal, setShowAgreementModal] = useState(false);
+
     const switchView = (next) => {
         setView(next);
         setAuthMessage('');
@@ -54,6 +57,10 @@ const AuthPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (!agreementChecked) {
+            setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+            return;
+        }
         setLoginStatus('loading');
         try {
             const res = await axios.post('http://localhost:8000/api/auth/login/', {
@@ -77,6 +84,10 @@ const AuthPage = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        if (!agreementChecked) {
+            setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+            return;
+        }
         if (registerPassword !== registerPassword2) {
             setAuthMessage('Şifreler eşleşmiyor.');
             return;
@@ -117,7 +128,18 @@ const AuthPage = () => {
     });
 
     const GoogleButton = ({ label }) => (
-        <button className="auth-oauth-btn" onClick={handleGoogleAuth} type="button">
+        <button 
+            className="auth-oauth-btn" 
+            onClick={() => {
+                if (!agreementChecked) {
+                    setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+                    return;
+                }
+                handleGoogleAuth();
+            }} 
+            type="button"
+            style={{ opacity: agreementChecked ? 1 : 0.6, cursor: agreementChecked ? 'pointer' : 'not-allowed' }}
+        >
             <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -188,10 +210,23 @@ const AuthPage = () => {
                                         required
                                     />
                                 </div>
+                                <div className="auth-agreement-group">
+                                    <label className="auth-checkbox-label">
+                                        <input
+                                            type="checkbox"
+                                            checked={agreementChecked}
+                                            onChange={(e) => setAgreementChecked(e.target.checked)}
+                                            required
+                                        />
+                                        <span>
+                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>Son Kullanıcı Sözleşmesi</a>'ni okudum ve onaylıyorum.
+                                        </span>
+                                    </label>
+                                </div>
                                 <button
                                     type="submit"
                                     className="auth-submit-btn"
-                                    disabled={loginStatus === 'loading'}
+                                    disabled={loginStatus === 'loading' || !agreementChecked}
                                 >
                                     {loginStatus === 'loading' ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                                 </button>
@@ -252,10 +287,23 @@ const AuthPage = () => {
                                         required
                                     />
                                 </div>
+                                <div className="auth-agreement-group">
+                                    <label className="auth-checkbox-label">
+                                        <input
+                                            type="checkbox"
+                                            checked={agreementChecked}
+                                            onChange={(e) => setAgreementChecked(e.target.checked)}
+                                            required
+                                        />
+                                        <span>
+                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>Son Kullanıcı Sözleşmesi</a>'ni okudum ve onaylıyorum.
+                                        </span>
+                                    </label>
+                                </div>
                                 <button
                                     type="submit"
                                     className="auth-submit-btn"
-                                    disabled={registerStatus === 'loading' || registerStatus === 'success'}
+                                    disabled={registerStatus === 'loading' || registerStatus === 'success' || !agreementChecked}
                                 >
                                     {registerStatus === 'loading' ? 'Oluşturuluyor...' : 'Hesap Oluştur'}
                                 </button>
@@ -276,6 +324,38 @@ const AuthPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Agreement Modal */}
+            {showAgreementModal && (
+                <div className="auth-modal-overlay" onClick={() => setShowAgreementModal(false)}>
+                    <div className="auth-modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="auth-modal-header">
+                            <h3>Son Kullanıcı Sözleşmesi</h3>
+                            <button className="auth-modal-close" onClick={() => setShowAgreementModal(false)}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="auth-modal-body">
+                            <p><strong>1. Taraflar ve Kapsam:</strong> Bu sözleşme, Volinor Savunma Teknolojileri (bundan böyle "Volinor" olarak anılacaktır) ile platforma erişim sağlayan yetkili kullanıcı arasında akdedilmiştir.</p>
+                            <p><strong>2. Kritik Altyapı ve Güvenlik:</strong> Kullanıcı, platformda yer alan savunma sanayi projelerinin ve verilerinin, ulusal güvenlik politikalarına ve gizlilik dereceli bilgi standartlarına tabi olduğunu kabul eder.</p>
+                            <p><strong>3. Yetkisiz Erişim ve İfşa:</strong> Platform üzerindeki her türlü bilginin, belgenin veya modelin üçüncü şahıslarla veya yetkisiz kurumlarla paylaşılması kesinlikle yasaktır. İhlal durumunda ulusal ve uluslararası mevzuat kapsamında yasal işlem başlatılacaktır.</p>
+                            <p><strong>4. Fikri ve Sınai Mülkiyet:</strong> Platformda yer alan algoritmalar, tasarımlar, analizler ve veri setlerinin tüm fikri mülkiyeti Volinor'a aittir. Kopyalanması veya tersine mühendislik (reverse engineering) yapılması yasaktır.</p>
+                            <p><strong>5. Denetim ve İzleme:</strong> Volinor, bilgi güvenliği prosedürleri gereği sistem üzerindeki tüm kullanıcı hareketlerini loglama, izleme ve şüpheli durumlarda ilgili güvenlik makamlarına raporlama hakkını saklı tutar.</p>
+                            <p><strong>6. Kullanım Kısıtlamaları:</strong> Platform yalnızca yetkilendirilmiş görevler, AR-GE faaliyetleri ve taktiksel analizler kapsamında kullanılabilir. Kişisel amaçlarla veya yetkisiz cihazlardan sisteme erişim sağlanamaz.</p>
+                        </div>
+                        <div className="auth-modal-footer">
+                            <button className="auth-submit-btn" onClick={() => {
+                                setAgreementChecked(true);
+                                setShowAgreementModal(false);
+                            }}>
+                                Kabul Et ve Kapat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

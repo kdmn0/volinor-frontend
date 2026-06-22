@@ -1,16 +1,43 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect, useLayoutEffect } from 'react';
+import * as THREE from 'three';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html } from '@react-three/drei';
-import { products } from '../data/products';
+import { OrbitControls, Environment, ContactShadows, Html, useGLTF } from '@react-three/drei';
 import { motion } from 'motion/react';
+import axios from 'axios';
+
+const RealModel = ({ url }) => {
+  const { scene } = useGLTF(url);
+  
+  useLayoutEffect(() => {
+    if (!scene) return;
+    
+    // Calculate the bounding box of the model
+    const box = new THREE.Box3().setFromObject(scene);
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    
+    // Set a target maximum size for all models (e.g., 4 units)
+    const targetSize = 4; 
+    
+    if (maxDim > 0) {
+      const scale = targetSize / maxDim;
+      scene.scale.setScalar(scale);
+      
+      // Center the model perfectly in the scene
+      const center = box.getCenter(new THREE.Vector3());
+      scene.position.sub(center.multiplyScalar(scale));
+    }
+  }, [scene]);
+
+  return <primitive object={scene} />;
+};
 
 // 3D Model Placeholder or Actual Loader
 const ModelViewer = ({ modelPath }) => {
-  // Gerçek modeller hazır olduğunda aşağıdaki kodu kullanabilirsiniz:
-  // import { useGLTF } from '@react-three/drei';
-  // const { scene } = useGLTF(modelPath);
-  // return <primitive object={scene} scale={1} />;
+  if (modelPath) {
+    return <RealModel url={modelPath} />;
+  }
 
   // Şimdilik geçici, teknolojik görünümlü bir dönen placeholder:
   return (
@@ -44,8 +71,32 @@ const Loader = () => {
 export default function ProductDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   
-  const product = products.find(p => p.slug === slug);
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/products/${slug}/`)
+      .then((res) => {
+        setProduct(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Ürün detayı çekilirken hata oluştu:", err);
+        setLoading(false);
+      });
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center bg-[#080f1e] text-white">
+        <svg className="w-12 h-12 animate-spin mb-4 text-[#00e5ff]" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h2 className="text-xl font-medium tracking-widest text-[#00e5ff]">YÜKLENİYOR...</h2>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -84,7 +135,7 @@ export default function ProductDetailPage() {
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
           <Environment preset="city" />
           <Suspense fallback={<Loader />}>
-             <ModelViewer modelPath={product.modelPath} />
+             <ModelViewer modelPath={product.model_file} />
              <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={10} blur={2} far={4} />
           </Suspense>
           <OrbitControls autoRotate autoRotateSpeed={2} enablePan={false} enableZoom={true} minDistance={2} maxDistance={10} />
@@ -114,24 +165,6 @@ export default function ProductDetailPage() {
           <p className="text-white/70 text-sm md:text-base leading-relaxed mb-6">
             {product.description}
           </p>
-
-          <div className="space-y-3 bg-white/5 p-5 rounded-xl border border-white/10">
-            <h3 className="text-white font-medium text-base border-b border-white/10 pb-2 mb-3">Öne Çıkan Özellikler</h3>
-            <ul className="text-white/70 space-y-2 text-xs md:text-sm">
-              <li className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#00e5ff] shadow-[0_0_5px_#00e5ff]"></div>
-                Yüksek Sadakatli 3D Modelleme
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#00e5ff] shadow-[0_0_5px_#00e5ff]"></div>
-                Gerçek Zamanlı Veri Entegrasyonu
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#00e5ff] shadow-[0_0_5px_#00e5ff]"></div>
-                Gelişmiş Karar Destek Algoritmaları
-              </li>
-            </ul>
-          </div>
           
           <button className="mt-6 w-full py-3.5 bg-white/5 border border-white/10 text-white font-semibold rounded-lg hover:bg-white/10 transition-all hover:border-[#00e5ff]/50 hover:shadow-[0_0_20px_rgba(0,229,255,0.15)] group relative overflow-hidden">
             <span className="relative z-10">Bilgi Al</span>

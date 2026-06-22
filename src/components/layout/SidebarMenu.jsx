@@ -40,7 +40,16 @@ export const SidebarMenu = ({ isNavOpen, activePage, setActivePage }) => {
                   <div
                     className={`absolute -left-6 top-1/2 -translate-y-1/2 w-[2px] transition-all duration-300 rounded-full ${isActive ? "h-8 bg-[#00e5ff] shadow-[0_0_15px_#00e5ff]" : "h-0 bg-[#00e5ff]/50 group-hover:h-6 group-hover:bg-[#00e5ff] group-hover:shadow-[0_0_10px_#00e5ff]"}`}
                   />
-                  <span className="relative z-10">{item.label}</span>
+                  <span className="relative z-10 flex flex-col gap-1">
+                    {item.id === "model-kutuphanesi" || item.id === "video-kutuphanesi" ? (
+                      <>
+                        <span>{item.label.split(" ")[0]}</span>
+                        <span>{item.label.split(" ").slice(1).join(" ")}</span>
+                      </>
+                    ) : (
+                      item.label
+                    )}
+                  </span>
                 </Link>
               </motion.div>
             );

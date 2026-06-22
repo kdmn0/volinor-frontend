@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import { useConfigStore } from '../../store/useConfigStore';
 import './AuthPage.css';
 
 const AuthPage = () => {
+    const { t } = useTranslation();
     const [view, setView] = useState('login');
     const [authMessage, setAuthMessage] = useState('');
+    const [authMessageType, setAuthMessageType] = useState('error');
     const navigate = useNavigate();
     const setIsLoggedIn = useConfigStore((state) => state.setIsLoggedIn);
     const setUserEmail = useConfigStore((state) => state.setUserEmail);
@@ -23,6 +26,11 @@ const AuthPage = () => {
 
     const [agreementChecked, setAgreementChecked] = useState(false);
     const [showAgreementModal, setShowAgreementModal] = useState(false);
+
+    const setMessage = (msg, type = 'error') => {
+        setAuthMessage(msg);
+        setAuthMessageType(type);
+    };
 
     const switchView = (next) => {
         setView(next);
@@ -42,23 +50,23 @@ const AuthPage = () => {
                     setUserEmail(email);
                 }
                 setIsLoggedIn(true);
-                setAuthMessage('Giriş Başarılı! Yönlendiriliyorsunuz...');
+                setMessage(t('auth.msg_login_success'), 'success');
                 setTimeout(() => navigate('/model-kutuphanesi'), 1500);
             } catch (err) {
-                setAuthMessage(
+                setMessage(
                     err.response?.status === 403
-                        ? 'Hesabınız yönetici onayını bekliyor. Lütfen daha sonra tekrar deneyin.'
-                        : 'Giriş yapılırken bir hata oluştu.'
+                        ? t('auth.msg_pending_approval')
+                        : t('auth.msg_login_error')
                 );
             }
         },
-        onError: () => setAuthMessage('Google ile bağlantı kurulamadı.'),
+        onError: () => setMessage(t('auth.msg_google_error')),
     });
 
     const handleLogin = async (e) => {
         e.preventDefault();
         if (!agreementChecked) {
-            setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+            setMessage(t('auth.msg_agreement_required'));
             return;
         }
         setLoginStatus('loading');
@@ -74,22 +82,22 @@ const AuthPage = () => {
             setLoginStatus('success');
             setIsLoggedIn(true);
             setUserEmail(loginEmail);
-            setAuthMessage('Giriş Başarılı! Yönlendiriliyorsunuz...');
+            setMessage(t('auth.msg_login_success'), 'success');
             setTimeout(() => navigate('/model-kutuphanesi'), 1500);
         } catch (err) {
             setLoginStatus('idle');
-            setAuthMessage(parseApiError(err.response?.data, 'E-posta veya şifre hatalı.'));
+            setMessage(parseApiError(err.response?.data, t('auth.msg_login_invalid')));
         }
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
         if (!agreementChecked) {
-            setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+            setMessage(t('auth.msg_agreement_required'));
             return;
         }
         if (registerPassword !== registerPassword2) {
-            setAuthMessage('Şifreler eşleşmiyor.');
+            setMessage(t('auth.msg_passwords_mismatch'));
             return;
         }
         setRegisterStatus('loading');
@@ -100,10 +108,10 @@ const AuthPage = () => {
                 password2: registerPassword2,
             });
             setRegisterStatus('success');
-            setAuthMessage('Hesabınız oluşturuldu! Doğrulama e-postası gönderildi, lütfen gelen kutunuzu kontrol edin.');
+            setMessage(t('auth.msg_register_success'), 'success');
         } catch (err) {
             setRegisterStatus('idle');
-            setAuthMessage(parseApiError(err.response?.data, 'Kayıt sırasında bir hata oluştu.'));
+            setMessage(parseApiError(err.response?.data, t('auth.msg_register_error')));
         }
     };
 
@@ -114,29 +122,27 @@ const AuthPage = () => {
         return typeof first === 'string' ? first : fallback;
     };
 
-    const messageStyle = (msg) => ({
+    const messageStyle = {
         padding: '10px',
         marginBottom: '15px',
         borderRadius: '6px',
         fontSize: '0.9rem',
         textAlign: 'center',
-        backgroundColor: msg.includes('Başarılı') || msg.includes('oluşturuldu')
-            ? 'rgba(34, 197, 94, 0.1)'
-            : 'rgba(239, 68, 68, 0.1)',
-        color: msg.includes('Başarılı') || msg.includes('oluşturuldu') ? '#22c55e' : '#ef4444',
-        border: `1px solid ${msg.includes('Başarılı') || msg.includes('oluşturuldu') ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
-    });
+        backgroundColor: authMessageType === 'success' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+        color: authMessageType === 'success' ? '#22c55e' : '#ef4444',
+        border: `1px solid ${authMessageType === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
+    };
 
     const GoogleButton = ({ label }) => (
-        <button 
-            className="auth-oauth-btn" 
+        <button
+            className="auth-oauth-btn"
             onClick={() => {
                 if (!agreementChecked) {
-                    setAuthMessage('Lütfen devam etmeden önce kullanıcı sözleşmesini onaylayın.');
+                    setMessage(t('auth.msg_agreement_required'));
                     return;
                 }
                 handleGoogleAuth();
-            }} 
+            }}
             type="button"
             style={{ opacity: agreementChecked ? 1 : 0.6, cursor: agreementChecked ? 'pointer' : 'not-allowed' }}
         >
@@ -156,7 +162,7 @@ const AuthPage = () => {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
-                Ana Sayfaya Dön
+                {t('auth.back_home')}
             </Link>
             <div className="auth-split-layout">
                 <div className="auth-visual-pane">
@@ -167,30 +173,29 @@ const AuthPage = () => {
                             <img src="/logo_kucuk.png" alt="Volinor Logo Icon" style={{ height: '32px', width: 'auto' }} />
                             <img src="/logo_yazı.png" alt="Volinor" style={{ height: '36px', width: 'auto' }} />
                         </Link>
-                        <h1>Dijital varlıklarınızı güvenle yönetin.</h1>
-                        <p>Yeni nesil bulut altyapısı ile projelerinizi saniyeler içinde hayata geçirin.</p>
+                        <h1>{t('auth.tagline')}</h1>
+                        <p>{t('auth.tagline_sub')}</p>
                     </div>
                 </div>
 
                 <div className="auth-form-pane">
                     <div className="auth-form-container">
 
-                        {/* Login View */}
                         <div className={`auth-view ${view === 'login' ? 'active' : ''}`}>
                             <div className="auth-form-header">
-                                <h2>Hoş geldiniz</h2>
-                                <p>Hesabınıza giriş yaparak devam edin.</p>
+                                <h2>{t('auth.login_title')}</h2>
+                                <p>{t('auth.login_subtitle')}</p>
                             </div>
 
-                            {authMessage && <div style={messageStyle(authMessage)}>{authMessage}</div>}
+                            {authMessage && <div style={messageStyle}>{authMessage}</div>}
 
                             <form onSubmit={handleLogin} className="auth-form">
                                 <div className="auth-input-group">
-                                    <label htmlFor="login-email">E-posta adresi</label>
+                                    <label htmlFor="login-email">{t('auth.email_label')}</label>
                                     <input
                                         type="email"
                                         id="login-email"
-                                        placeholder="ornek@sirket.com"
+                                        placeholder={t('auth.email_placeholder')}
                                         value={loginEmail}
                                         onChange={(e) => setLoginEmail(e.target.value)}
                                         required
@@ -198,8 +203,8 @@ const AuthPage = () => {
                                 </div>
                                 <div className="auth-input-group">
                                     <div className="auth-label-row">
-                                        <label htmlFor="login-password">Şifre</label>
-                                        <Link to="/forgot-password" className="auth-forgot-link">Şifremi unuttum</Link>
+                                        <label htmlFor="login-password">{t('auth.password_label')}</label>
+                                        <Link to="/forgot-password" className="auth-forgot-link">{t('auth.forgot_password')}</Link>
                                     </div>
                                     <input
                                         type="password"
@@ -219,7 +224,7 @@ const AuthPage = () => {
                                             required
                                         />
                                         <span>
-                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>Son Kullanıcı Sözleşmesi</a>'ni okudum ve onaylıyorum.
+                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>{t('auth.agreement_text')}</a>{t('auth.agreement_suffix')}
                                         </span>
                                     </label>
                                 </div>
@@ -228,60 +233,59 @@ const AuthPage = () => {
                                     className="auth-submit-btn"
                                     disabled={loginStatus === 'loading' || !agreementChecked}
                                 >
-                                    {loginStatus === 'loading' ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+                                    {loginStatus === 'loading' ? t('auth.login_loading') : t('auth.login_btn')}
                                 </button>
                             </form>
 
-                            <div className="auth-divider"><span>veya</span></div>
+                            <div className="auth-divider"><span>{t('auth.divider')}</span></div>
                             <div className="auth-oauth-group">
-                                <GoogleButton label="Google ile devam et" />
+                                <GoogleButton label={t('auth.google_login')} />
                             </div>
                             <div className="auth-switch-view">
-                                Hesabınız yok mu?{' '}
+                                {t('auth.no_account')}{' '}
                                 <a href="#register" onClick={(e) => { e.preventDefault(); switchView('register'); }}>
-                                    Ücretsiz hesap oluşturun
+                                    {t('auth.create_account_link')}
                                 </a>
                             </div>
                         </div>
 
-                        {/* Register View */}
                         <div className={`auth-view ${view === 'register' ? 'active' : ''}`}>
                             <div className="auth-form-header">
-                                <h2>Hesap Oluştur</h2>
-                                <p>Platforma katılmak için bilgilerinizi girin.</p>
+                                <h2>{t('auth.register_title')}</h2>
+                                <p>{t('auth.register_subtitle')}</p>
                             </div>
 
-                            {authMessage && <div style={messageStyle(authMessage)}>{authMessage}</div>}
+                            {authMessage && <div style={messageStyle}>{authMessage}</div>}
 
                             <form onSubmit={handleRegister} className="auth-form">
                                 <div className="auth-input-group">
-                                    <label htmlFor="register-email">E-posta adresi</label>
+                                    <label htmlFor="register-email">{t('auth.email_label')}</label>
                                     <input
                                         type="email"
                                         id="register-email"
-                                        placeholder="ornek@sirket.com"
+                                        placeholder={t('auth.email_placeholder')}
                                         value={registerEmail}
                                         onChange={(e) => setRegisterEmail(e.target.value)}
                                         required
                                     />
                                 </div>
                                 <div className="auth-input-group">
-                                    <label htmlFor="register-password">Şifre</label>
+                                    <label htmlFor="register-password">{t('auth.password_label')}</label>
                                     <input
                                         type="password"
                                         id="register-password"
-                                        placeholder="En az 8 karakter"
+                                        placeholder={t('auth.password_placeholder')}
                                         value={registerPassword}
                                         onChange={(e) => setRegisterPassword(e.target.value)}
                                         required
                                     />
                                 </div>
                                 <div className="auth-input-group">
-                                    <label htmlFor="register-password2">Şifre Tekrar</label>
+                                    <label htmlFor="register-password2">{t('auth.password2_label')}</label>
                                     <input
                                         type="password"
                                         id="register-password2"
-                                        placeholder="Şifrenizi tekrar girin"
+                                        placeholder={t('auth.password2_placeholder')}
                                         value={registerPassword2}
                                         onChange={(e) => setRegisterPassword2(e.target.value)}
                                         required
@@ -296,7 +300,7 @@ const AuthPage = () => {
                                             required
                                         />
                                         <span>
-                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>Son Kullanıcı Sözleşmesi</a>'ni okudum ve onaylıyorum.
+                                            <a href="#sozlesme" onClick={(e) => { e.preventDefault(); setShowAgreementModal(true); }}>{t('auth.agreement_text')}</a>{t('auth.agreement_suffix')}
                                         </span>
                                     </label>
                                 </div>
@@ -305,18 +309,18 @@ const AuthPage = () => {
                                     className="auth-submit-btn"
                                     disabled={registerStatus === 'loading' || registerStatus === 'success' || !agreementChecked}
                                 >
-                                    {registerStatus === 'loading' ? 'Oluşturuluyor...' : 'Hesap Oluştur'}
+                                    {registerStatus === 'loading' ? t('auth.register_loading') : t('auth.register_btn')}
                                 </button>
                             </form>
 
-                            <div className="auth-divider"><span>veya</span></div>
+                            <div className="auth-divider"><span>{t('auth.divider')}</span></div>
                             <div className="auth-oauth-group">
-                                <GoogleButton label="Google ile kayıt ol" />
+                                <GoogleButton label={t('auth.google_register')} />
                             </div>
                             <div className="auth-switch-view">
-                                Zaten hesabınız var mı?{' '}
+                                {t('auth.has_account')}{' '}
                                 <a href="#login" onClick={(e) => { e.preventDefault(); switchView('login'); }}>
-                                    Giriş yapın
+                                    {t('auth.login_link')}
                                 </a>
                             </div>
                         </div>
@@ -325,12 +329,11 @@ const AuthPage = () => {
                 </div>
             </div>
 
-            {/* Agreement Modal */}
             {showAgreementModal && (
                 <div className="auth-modal-overlay" onClick={() => setShowAgreementModal(false)}>
                     <div className="auth-modal-content" onClick={e => e.stopPropagation()}>
                         <div className="auth-modal-header">
-                            <h3>Son Kullanıcı Sözleşmesi</h3>
+                            <h3>{t('auth.agreement_modal_title')}</h3>
                             <button className="auth-modal-close" onClick={() => setShowAgreementModal(false)}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M18 6L6 18M6 6l12 12"/>
@@ -338,19 +341,19 @@ const AuthPage = () => {
                             </button>
                         </div>
                         <div className="auth-modal-body">
-                            <p><strong>1. Taraflar ve Kapsam:</strong> Bu sözleşme, Volinor Savunma Teknolojileri (bundan böyle "Volinor" olarak anılacaktır) ile platforma erişim sağlayan yetkili kullanıcı arasında akdedilmiştir.</p>
-                            <p><strong>2. Kritik Altyapı ve Güvenlik:</strong> Kullanıcı, platformda yer alan savunma sanayi projelerinin ve verilerinin, ulusal güvenlik politikalarına ve gizlilik dereceli bilgi standartlarına tabi olduğunu kabul eder.</p>
-                            <p><strong>3. Yetkisiz Erişim ve İfşa:</strong> Platform üzerindeki her türlü bilginin, belgenin veya modelin üçüncü şahıslarla veya yetkisiz kurumlarla paylaşılması kesinlikle yasaktır. İhlal durumunda ulusal ve uluslararası mevzuat kapsamında yasal işlem başlatılacaktır.</p>
-                            <p><strong>4. Fikri ve Sınai Mülkiyet:</strong> Platformda yer alan algoritmalar, tasarımlar, analizler ve veri setlerinin tüm fikri mülkiyeti Volinor'a aittir. Kopyalanması veya tersine mühendislik (reverse engineering) yapılması yasaktır.</p>
-                            <p><strong>5. Denetim ve İzleme:</strong> Volinor, bilgi güvenliği prosedürleri gereği sistem üzerindeki tüm kullanıcı hareketlerini loglama, izleme ve şüpheli durumlarda ilgili güvenlik makamlarına raporlama hakkını saklı tutar.</p>
-                            <p><strong>6. Kullanım Kısıtlamaları:</strong> Platform yalnızca yetkilendirilmiş görevler, AR-GE faaliyetleri ve taktiksel analizler kapsamında kullanılabilir. Kişisel amaçlarla veya yetkisiz cihazlardan sisteme erişim sağlanamaz.</p>
+                            <p><strong>{t('auth.agreement_1_title')}</strong> {t('auth.agreement_1_body')}</p>
+                            <p><strong>{t('auth.agreement_2_title')}</strong> {t('auth.agreement_2_body')}</p>
+                            <p><strong>{t('auth.agreement_3_title')}</strong> {t('auth.agreement_3_body')}</p>
+                            <p><strong>{t('auth.agreement_4_title')}</strong> {t('auth.agreement_4_body')}</p>
+                            <p><strong>{t('auth.agreement_5_title')}</strong> {t('auth.agreement_5_body')}</p>
+                            <p><strong>{t('auth.agreement_6_title')}</strong> {t('auth.agreement_6_body')}</p>
                         </div>
                         <div className="auth-modal-footer">
                             <button className="auth-submit-btn" onClick={() => {
                                 setAgreementChecked(true);
                                 setShowAgreementModal(false);
                             }}>
-                                Kabul Et ve Kapat
+                                {t('auth.agreement_accept')}
                             </button>
                         </div>
                     </div>

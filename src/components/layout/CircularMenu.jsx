@@ -61,8 +61,8 @@ export const CircularMenu = ({
   const screenRatio = (typeof window !== 'undefined' && window.screen) ? window.screen.width / window.screen.height : aspectRatio;
   const is16by10 = (aspectRatio >= 1.55 && aspectRatio <= 1.65) || (screenRatio >= 1.55 && screenRatio <= 1.65);
   
-  // 16:10 ekranlar için ölçeği %35, 16:9 (örn. 1920x1080) ve diğer ekranlar için %15 büyütüyoruz
-  const scaleMultiplier = is16by10 ? 1.35 : 1.15;
+  // 16:10 ekranlar için ölçeği %35, 16:9 (örn. 1920x1080) ve diğer ekranlar için %20 büyütüyoruz
+  const scaleMultiplier = is16by10 ? 1.35 : 1.20;
 
   // Ekran küçük olsa bile menünün daha büyük kalabilmesi için alt sınırı (MIN_SCALE) esnetiyoruz.
   const currentMinScale = is16by10 ? MIN_SCALE * 1.15 : MIN_SCALE * 1.10;

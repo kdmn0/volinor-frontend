@@ -272,4 +272,4 @@ export function BeeModel(props) {
   );
 }
 
-useGLTF.preload("/models/bee-super.glb");
+useGLTF.preload("/models/bee.glb");

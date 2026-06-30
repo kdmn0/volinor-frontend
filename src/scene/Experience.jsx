@@ -35,9 +35,14 @@ export const Experience = () => {
 
       <Suspense fallback={null}>
         {/* City ışığına geri dönüldü, binaların tamamen silinmesi için çözünürlük ekstrem şekilde düşürüldü */}
-        <Environment preset="city" resolution={2} blur={1} environmentIntensity={1.5} />
+        <Environment
+          preset="city"
+          resolution={2}
+          blur={1}
+          environmentIntensity={0.6}
+        />
 
-        <ambientLight intensity={1} />
+        <ambientLight intensity={0.5} />
         <directionalLight
           position={[5, 10, 5]}
           intensity={1.5}

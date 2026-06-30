@@ -76,6 +76,18 @@ export function BeeModel(props) {
         if (!mat) {
           mat = child.material.clone();
 
+          // --- DOKU AYARLARI ---
+          // "Tam metal parlaklığı yerine daha mat ama yansımalı" görünüm
+          // Metalik etkiyi kısıyoruz (0'a yaklaştıkça plastik/mat, 1'e yaklaştıkça metal)
+          mat.metalness = 0.9;
+          // Pürüzlülüğü artırıyoruz (0: ayna gibi yansıtır, 1: hiç yansıtmaz mat olur)
+          mat.roughness = 0.1;
+
+          // Çevresel (ışık) yansımaların şiddetini biraz hafifletiyoruz
+          if (mat.envMapIntensity !== undefined) {
+            mat.envMapIntensity = 0.8;
+          }
+
           if (isWhite) {
             mat.color.set("#FFFFFF"); // Beyaz
           } else if (isGray) {
@@ -88,7 +100,7 @@ export function BeeModel(props) {
             mat.opacity = 1;
             mat.transmission = 0; // MeshPhysicalMaterial için şeffaflık
             mat.roughness = 0.5;
-            mat.metalness = 0.5;
+            mat.metalness = 0.4;
             mat.color.set("#A0A0A0"); // Tamamen renksiz kalmaması için hafif gri yapalım
           }
 

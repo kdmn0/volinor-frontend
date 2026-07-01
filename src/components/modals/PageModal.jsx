@@ -128,13 +128,13 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 border-l border-[#ffb800]/10 ${activePage === "hakkimizda" ? "overflow-hidden bg-[#0a0a0a]" : "overflow-y-auto custom-scrollbar bg-[#0a0a0a]"}`}>
+          className={`absolute inset-y-0 left-0 md:left-[300px] right-0 z-[45] md:z-30 pointer-events-auto flex items-start md:items-center justify-start p-6 pt-24 md:p-16 border-l border-[#ffb800]/10 ${activePage === "hakkimizda" ? "overflow-y-auto md:overflow-hidden bg-[#0a0a0a] custom-scrollbar" : "overflow-y-auto custom-scrollbar bg-[#0a0a0a]"}`}>
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
             transition={{ delay: 0.1, type: "spring", damping: 25 }}
-            className={`w-full pointer-events-auto text-left md:my-auto ${activePage === "hakkimizda" ? "h-full flex flex-col justify-center" : ""} ${isWidePage ? "max-w-7xl" : "max-w-3xl"}`}>
+            className={`w-full pointer-events-auto text-left md:my-auto ${activePage === "hakkimizda" ? "md:h-full md:flex md:flex-col md:justify-center" : ""} ${isWidePage ? "max-w-7xl" : "max-w-3xl"}`}>
             <button
               onClick={() => {
                 navigate("/");
@@ -282,7 +282,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                           <img
                             src="/odtü-foto.jpeg"
                             alt="ODTÜ"
-                            className="w-full h-[530px] object-cover transition-transform duration-700 group-hover:scale-105"
+                            className="w-full h-[300px] md:h-[530px] object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none"></div>
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>

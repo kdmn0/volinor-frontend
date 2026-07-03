@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "motion/react";
 
-const API = "http://localhost:8000";
+const API = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}`;
 
 const ChevronLeftIcon = ({ className = "" }) => (
   <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -75,7 +75,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/products/${slug}/`)
+    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/products/${slug}/`)
       .then((res) => {
         setProduct(res.data);
         setLoading(false);

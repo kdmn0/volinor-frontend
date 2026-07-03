@@ -16,7 +16,7 @@ const VerifyEmail = () => {
 
         const verify = async () => {
             try {
-                const response = await axios.post('http://localhost:8000/api/auth/registration/verify-email/', {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/registration/verify-email/`, {
                     key: key
                 });
                 setStatus('success');

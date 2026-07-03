@@ -4,7 +4,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "motion/react";
 import { useConfigStore } from "../store/useConfigStore";
 
-const API = "http://localhost:8000";
+const API = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}`;
 
 const ArrowLeftIcon = ({ className = "" }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>

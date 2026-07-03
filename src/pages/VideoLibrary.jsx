@@ -10,7 +10,7 @@ export default function VideoLibrary() {
     const fetchVideos = async () => {
       try {
         // Django backend'inden verileri çekiyoruz
-        const response = await fetch("http://localhost:8000/api/videos/");
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/videos/`);
         if (!response.ok) {
           throw new Error("Video verileri yüklenemedi.");
         }

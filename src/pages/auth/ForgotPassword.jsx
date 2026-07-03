@@ -12,7 +12,7 @@ const ForgotPassword = () => {
         e.preventDefault();
         setStatus('loading');
         try {
-            await axios.post('http://localhost:8000/api/auth/password/reset/', { email });
+            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/password/reset/`, { email });
             setStatus('success');
             setMessage('Şifre sıfırlama linki e-posta adresinize gönderildi. Lütfen gelen kutunuzu kontrol edin.');
         } catch (err) {

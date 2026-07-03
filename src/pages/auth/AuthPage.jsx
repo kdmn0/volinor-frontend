@@ -40,7 +40,7 @@ const AuthPage = () => {
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (googleResponse) => {
             try {
-                const res = await axios.post('http://localhost:8000/api/auth/google/', {
+                const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/google/`, {
                     access_token: googleResponse.access_token,
                 });
                 if (res.data.access_token) {
@@ -71,7 +71,7 @@ const AuthPage = () => {
         }
         setLoginStatus('loading');
         try {
-            const res = await axios.post('http://localhost:8000/api/auth/login/', {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/login/`, {
                 email: loginEmail,
                 password: loginPassword,
             });
@@ -102,7 +102,7 @@ const AuthPage = () => {
         }
         setRegisterStatus('loading');
         try {
-            await axios.post('http://localhost:8000/api/auth/registration/', {
+            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/registration/`, {
                 email: registerEmail,
                 password1: registerPassword,
                 password2: registerPassword2,

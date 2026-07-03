@@ -28,7 +28,7 @@ const ResetPassword = () => {
 
         setStatus('loading');
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/password/reset/confirm/', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/password/reset/confirm/`, {
                 uid: uid,
                 token: token,
                 new_password1: password,

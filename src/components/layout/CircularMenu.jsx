@@ -307,7 +307,7 @@ export const CircularMenu = ({
 
       {/* Menü Açma/Kapama Butonu */}
       <div
-        className="absolute z-50 pointer-events-auto cursor-pointer flex flex-col justify-center items-center gap-[6px] group min-w-[44px] min-h-[44px] transition-all duration-500 ease-out"
+        className="absolute z-50 pointer-events-auto cursor-pointer flex justify-center items-center group min-w-[44px] min-h-[44px] transition-all duration-500 ease-out"
         style={
           isMobile
             ? { right: "1rem", top: "1rem" }
@@ -318,9 +318,18 @@ export const CircularMenu = ({
               }
         }
         onClick={() => setIsNavOpen(!isNavOpen)}>
-        <div className={`w-6 h-[1px] bg-white transition-all duration-300 origin-center ${isNavOpen ? "rotate-45 translate-y-[7px]" : "group-hover:w-8 group-hover:bg-white"}`} />
-        <div className={`w-6 h-[1px] bg-white transition-all duration-300 ${isNavOpen ? "opacity-0" : "group-hover:w-5 group-hover:bg-white"}`} />
-        <div className={`w-6 h-[1px] bg-white transition-all duration-300 origin-center ${isNavOpen ? "-rotate-45 -translate-y-[7px]" : "group-hover:w-8 group-hover:bg-white"}`} />
+        <div className="relative w-8 h-8 flex justify-center items-center">
+          <div className={`absolute inset-0 flex flex-col justify-center items-center gap-[6px] transition-all duration-300 ${isNavOpen ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"}`}>
+            <div className="w-6 h-[1px] bg-white transition-all duration-300 group-hover:w-8" />
+            <div className="w-6 h-[1px] bg-white transition-all duration-300 group-hover:w-5" />
+            <div className="w-6 h-[1px] bg-white transition-all duration-300 group-hover:w-8" />
+          </div>
+          <div className={`absolute inset-0 flex justify-center items-center transition-all duration-300 ${isNavOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"}`}>
+            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </div>
+        </div>
         <div
           className={`font-display absolute left-full ml-2 whitespace-nowrap font-semibold tracking-[0.35em] transition-all duration-300 ${isNavOpen ? "text-white/0 translate-x-2" : "text-white/50 group-hover:text-white translate-x-0"}`}
           style={{ fontSize: `${menuLabelPx}px` }}>

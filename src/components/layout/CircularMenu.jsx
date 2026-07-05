@@ -89,7 +89,7 @@ export const CircularMenu = ({
   const textMR      = Math.max(12,  Math.round(16  * sm));
   const labelPx     = Math.max(13,  Math.round(16  * fontSm));
   const subPx       = Math.max(10,  Math.round(12  * fontSm));
-  const menuLabelPx = Math.max(12,  Math.round(14  * fontSm));
+  const menuLabelPx = Math.max(13,  Math.round(16  * fontSm));
   const activeLineH = Math.max(60,  Math.round(80  * sm));
   const hoverLineH  = Math.max(36,  Math.round(48  * sm));
   const vertLineH   = Math.max(48,  Math.round(64  * sm));
@@ -331,7 +331,7 @@ export const CircularMenu = ({
           </div>
         </div>
         <div
-          className={`font-display absolute left-full ml-2 whitespace-nowrap font-semibold tracking-[0.35em] transition-all duration-300 ${isNavOpen ? "text-white/0 translate-x-2" : "text-white/50 group-hover:text-white translate-x-0"}`}
+          className={`font-display absolute left-full ml-3 whitespace-nowrap font-semibold tracking-[0.35em] transition-all duration-300 ${isNavOpen ? "text-white/0 translate-x-2" : "text-white/70 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] translate-x-0"}`}
           style={{ fontSize: `${menuLabelPx}px` }}>
           {t('ui.menu')}
         </div>

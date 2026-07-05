@@ -51,18 +51,8 @@ export const ProductsSlider = () => {
   }
 
   return (
-    <div className="relative flex items-center justify-between w-full gap-4 md:gap-8">
-      {/* Left Arrow (Desktop) */}
-      <button
-        onClick={prevSlide}
-        className="hidden md:flex flex-shrink-0 w-12 h-12 md:w-16 md:h-16 items-center justify-center rounded-full border-2 border-white/50 text-white/50 hover:bg-white/10 hover:text-white hover:border-white transition-all backdrop-blur-sm z-10"
-      >
-        <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
-      <div className="relative w-full flex-1 h-[350px] md:h-[450px] rounded-2xl overflow-hidden group border border-white/10">
+    <div className="relative w-full">
+      <div className="relative w-full h-[350px] md:h-[450px] rounded-2xl overflow-hidden group border border-white/10">
         <AnimatePresence initial={false}>
           <motion.img
             key={currentIndex}
@@ -139,17 +129,27 @@ export const ProductsSlider = () => {
             </svg>
           </button>
         </div>
-      </div>
 
-      {/* Right Arrow (Desktop) */}
-      <button
-        onClick={nextSlide}
-        className="hidden md:flex flex-shrink-0 w-12 h-12 md:w-16 md:h-16 items-center justify-center rounded-full border-2 border-white/50 text-white/50 hover:bg-white/10 hover:text-white hover:border-white transition-all backdrop-blur-sm z-10"
-      >
-        <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+        {/* Left Arrow (Desktop) */}
+        <button
+          onClick={prevSlide}
+          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-black/20 border border-white/30 text-white/70 hover:bg-white/10 hover:text-white hover:border-white transition-all backdrop-blur-md z-20"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Right Arrow (Desktop) */}
+        <button
+          onClick={nextSlide}
+          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-black/20 border border-white/30 text-white/70 hover:bg-white/10 hover:text-white hover:border-white transition-all backdrop-blur-md z-20"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 };

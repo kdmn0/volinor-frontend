@@ -146,7 +146,11 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
 
             {activePage !== "hakkimizda" && (
               <h1
-                className={`font-display text-3xl md:text-5xl font-light tracking-[0.25em] md:tracking-[0.35em] text-white ${
+                className={`font-display font-light text-white ${
+                  activePage === "urunlerimiz"
+                    ? "text-2xl md:text-4xl tracking-[0.25em] md:tracking-[0.3em]"
+                    : "text-3xl md:text-5xl tracking-[0.25em] md:tracking-[0.35em]"
+                } ${
                   activePage === "iletisim" ||
                   activePage === "model-kutuphanesi"
                     ? "sr-only"

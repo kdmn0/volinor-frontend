@@ -273,7 +273,7 @@ const HUDPanel = ({
     initial={{ opacity: 0, x: fromX, y: fromY }}
     animate={{ opacity: 1, x: 0, y: 0 }}
     transition={{ delay, duration: 0.7, ease: "easeOut" }}
-    className={`relative bg-[#1c1c1e]/5 backdrop-blur-md border border-white/[0.08] rounded-2xl p-5 shadow-[0_0_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)] pointer-events-auto ${className}`}>
+    className={`relative bg-[#1c1c1e]/[0.8] border border-white/[0.08] rounded-2xl p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] pointer-events-auto ${className}`}>
     {/* Sağ Üst Köşe Gri Vurgu */}
     <div className="absolute -top-[1px] -right-[1px] w-8 h-8 border-t-[2px] border-r-[2px] border-gray-400/70 rounded-tr-2xl pointer-events-none" />
 
@@ -318,12 +318,6 @@ export const AIOverlay = ({ onClose }) => {
       label: t("ai.objective_2"),
       priority: t("ai.priority_high"),
       color: "#ff4466",
-    },
-    {
-      icon: "◇",
-      label: t("ai.objective_3"),
-      priority: t("ai.priority_medium"),
-      color: "#ffb800",
     },
     {
       icon: "○",
@@ -735,129 +729,95 @@ export const AIOverlay = ({ onClose }) => {
          4 HUD PANELİ
          ══════════════════════════════════════ */}
 
-      {/* ── SOL ÜST: Hedef Tespiti ── */}
-      <div className="absolute top-[17%] left-[4%] md:left-[5%] w-[200px] z-[2] hidden md:block">
-        <HUDPanel delay={1.5} fromX={-30}>
-          <PanelTitle
-            title={t("ai.target_detection")}
-            subtitle={t("ai.image_analysis")}
-          />
-          <ThumbnailGrid />
-        </HUDPanel>
-      </div>
+      {/* ── SOL TARAF MENÜLERİ ── */}
+      <div className="absolute top-[3%] bottom-[20%] left-[4%] md:left-[5%] w-[230px] z-[2] hidden md:flex flex-col justify-between pointer-events-none">
+        
+        {/* 1. Hedef Tespiti */}
+        <div className="pointer-events-auto">
+          <HUDPanel delay={1.5} fromX={-30}>
+            <PanelTitle
+              title={t("ai.target_detection")}
+              subtitle={t("ai.image_analysis")}
+            />
+            <ThumbnailGrid />
+          </HUDPanel>
+        </div>
 
-      {/* ── SAĞ ÜST: Uçuş Rotası Planlaması ── */}
-      <div className="absolute top-[17%] right-[4%] md:right-[5%] w-[230px] z-[2] hidden md:block">
-        <HUDPanel delay={1.6} fromX={30}>
-          <PanelTitle
-            title={t("ai.route_planning")}
-            subtitle={t("ai.optimal_route")}
-          />
-          <RouteGraph />
-          <div className="flex flex-col gap-1.5 mt-3 pl-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-white/50 text-[10px] tracking-wider font-medium">
-                {t("ai.distance")}
-              </span>
-              <span className="text-white/90 text-[11px] font-bold font-mono tracking-wider">
-                <AnimatedNumber
-                  target={18.7}
-                  delay={2.5}
-                  duration={1.5}
-                  decimals={1}
-                  suffix=" KM"
-                />
-              </span>
+        {/* 2. Görev Hedefleri */}
+        <div className="pointer-events-auto">
+          <HUDPanel delay={1.6} fromX={-30}>
+            <PanelTitle
+              title={t("ai.mission_objectives")}
+              subtitle={t("ai.ai_prioritization")}
+            />
+            <div className="flex flex-col gap-2.5">
+              {objectives.map((obj, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 2 + i * 0.15 }}
+                  className="flex items-center gap-3">
+                  <span
+                    className="text-[14px] opacity-60"
+                    style={{ color: obj.color }}>
+                    {obj.icon}
+                  </span>
+                  <span className="text-white/80 text-[11px] font-medium tracking-wider flex-1">
+                    {obj.label}
+                  </span>
+                  <span
+                    className="text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full border"
+                    style={{
+                      color: obj.color,
+                      borderColor: `${obj.color}40`,
+                      backgroundColor: `${obj.color}10`,
+                    }}>
+                    {obj.priority}
+                  </span>
+                </motion.div>
+              ))}
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-white/50 text-[10px] tracking-wider font-medium">
-                {t("ai.duration")}
-              </span>
-              <span className="text-white/90 text-[11px] font-bold font-mono tracking-wider">
-                <AnimatedNumber
-                  target={12.4}
-                  delay={2.7}
-                  duration={1.5}
-                  decimals={1}
-                  suffix=" DK"
-                />
-              </span>
-            </div>
-          </div>
-        </HUDPanel>
+          </HUDPanel>
+        </div>
+
+        {/* 3. Uçuş Rotası */}
+        <div className="pointer-events-auto">
+          <HUDPanel delay={1.7} fromX={-30}>
+            <PanelTitle
+              title={t("ai.route_planning")}
+              subtitle={t("ai.optimal_route")}
+            />
+            <RouteGraph />
+          </HUDPanel>
+        </div>
+
       </div>
 
-      {/* ── SOL ALT: Görev Hedefleri ── */}
-      <div className="absolute bottom-[11%] left-[4%] md:left-[5%] w-[200px] z-[2] hidden md:block">
-        <HUDPanel delay={1.7} fromY={20}>
-          <PanelTitle
-            title={t("ai.mission_objectives")}
-            subtitle={t("ai.ai_prioritization")}
-          />
-          <div className="flex flex-col gap-2.5">
-            {objectives.map((obj, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2 + i * 0.15 }}
-                className="flex items-center gap-3">
-                <span
-                  className="text-[14px] opacity-60"
-                  style={{ color: obj.color }}>
-                  {obj.icon}
-                </span>
-                <span className="text-white/80 text-[11px] font-medium tracking-wider flex-1">
-                  {obj.label}
-                </span>
-                <span
-                  className="text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full border"
-                  style={{
-                    color: obj.color,
-                    borderColor: `${obj.color}40`,
-                    backgroundColor: `${obj.color}10`,
-                  }}>
-                  {obj.priority}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </HUDPanel>
-      </div>
-
-      {/* ── SAĞ ALT: Risk Analizi ── */}
-      <div className="absolute bottom-[11%] right-[4%] md:right-[5%] w-[230px] z-[2] hidden md:block">
+      {/* ── SAĞ ORTA: Ozvia ── */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-[4%] md:right-[5%] w-[240px] z-[2] hidden md:block">
         <HUDPanel delay={1.8} fromY={20}>
           <PanelTitle
-            title={t("ai.risk_analysis")}
-            subtitle={t("ai.hazard_assessment")}
+            title="YAPAY ZEKA"
+            color="#ffffff"
           />
-          <RiskGraph />
-          <div className="flex items-end justify-between">
-            <div className="flex flex-col">
-              <span className="text-white/40 text-[9px] tracking-wider font-medium">
-                {t("ai.risk_level")}
-              </span>
-              <span className="text-[#ffb800] text-[15px] font-bold tracking-wider">
-                {t("ai.priority_medium")}
-              </span>
-            </div>
-            {/* Mini EKG animasyonu */}
-            <svg
-              viewBox="0 0 60 20"
-              className="w-16 h-5"
-              style={{ filter: "drop-shadow(0 0 4px rgba(255,68,102,0.4))" }}>
-              <motion.path
-                d="M0,10 L8,10 L12,3 L16,17 L20,6 L24,14 L28,10 L36,10 L40,4 L44,16 L48,8 L52,12 L56,10 L60,10"
-                fill="none"
-                stroke="#ff4466"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ delay: 2.8, duration: 1.5, ease: "easeInOut" }}
-              />
-            </svg>
+          <div className="flex flex-col gap-6 mt-3">
+            <p className="text-white/60 text-[12px] leading-relaxed">
+              Otonom sistemler ve akıllı platformlar için yapay zeka tabanlı algoritmalar geliştiriyoruz. Görüntü işleme, karar destek ve otonom kontrol gibi alanlarda yenilikçi çözümler üretiyoruz. Modern işletme ve kurumlar için geliştirdiğimiz YZ asistanı Ozvia ile destek sağlıyoruz.
+            </p>
+            <a
+              href="https://ozviai.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-2 w-full rounded-md border border-[#ffb800]/40 bg-black/40 hover:bg-[#ffb800]/10 text-[#ffb800] transition-all text-[12px] font-medium tracking-wider"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Ozvia'yı Dene
+            </a>
           </div>
         </HUDPanel>
       </div>
@@ -892,24 +852,6 @@ export const AIOverlay = ({ onClose }) => {
         </HUDPanel>
 
         <HUDPanel delay={1.4} fromY={15}>
-          <PanelTitle title="UÇUŞ ROTASI" subtitle="ROTA HESAPLAMA" />
-          <div className="flex items-center gap-6">
-            <div>
-              <span className="text-white/40 text-[9px]">MESAFE</span>
-              <div className="text-white text-[13px] font-bold font-mono">
-                18.7 KM
-              </div>
-            </div>
-            <div>
-              <span className="text-white/40 text-[9px]">SÜRE</span>
-              <div className="text-white text-[13px] font-bold font-mono">
-                12.4 DK
-              </div>
-            </div>
-          </div>
-        </HUDPanel>
-
-        <HUDPanel delay={1.6} fromY={15}>
           <PanelTitle title="GÖREV HEDEFLERİ" subtitle="AI ÖNCELİKLENDİRME" />
           <div className="flex flex-col gap-2">
             {objectives.map((obj, i) => (
@@ -930,15 +872,32 @@ export const AIOverlay = ({ onClose }) => {
           </div>
         </HUDPanel>
 
+        <HUDPanel delay={1.6} fromY={15}>
+          <PanelTitle title="UÇUŞ ROTASI" subtitle="ROTA HESAPLAMA" />
+        </HUDPanel>
+
         <HUDPanel delay={1.8} fromY={15}>
           <PanelTitle
-            title="RİSK ANALİZİ"
-            subtitle="TEHLİKE DEĞERLENDİRME"
-            color="#ff4466"
+            title="YAPAY ZEKA"
+            color="#ffffff"
           />
-          <div className="flex items-center justify-between">
-            <span className="text-white/40 text-[9px]">RİSK SEVİYESİ</span>
-            <span className="text-[#ffb800] text-[13px] font-bold">ORTA</span>
+          <div className="flex flex-col gap-4 mt-2">
+            <p className="text-white/60 text-[10px] leading-[1.6]">
+              Otonom sistemler ve akıllı platformlar için yapay zeka tabanlı algoritmalar geliştiriyoruz. Görüntü işleme, karar destek ve otonom kontrol gibi alanlarda yenilikçi çözümler üretiyoruz. Modern işletme ve kurumlar için geliştirdiğimiz YZ asistanı Ozvia ile destek sağlıyoruz.
+            </p>
+            <a
+              href="https://ozviai.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-2 w-full rounded-md border border-[#ffb800]/40 bg-black/40 hover:bg-[#ffb800]/10 text-[#ffb800] transition-all text-[11px] font-medium tracking-wider"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Ozvia'yı Dene
+            </a>
           </div>
         </HUDPanel>
       </div>

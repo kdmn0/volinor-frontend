@@ -74,7 +74,9 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
 
   useEffect(() => {
     if (activePage === "sertifika-ve-patentler") {
-      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/certificates/`)
+      fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/certificates/`,
+      )
         .then((r) => r.json())
         .then(setCertificates)
         .catch(() => {});
@@ -86,15 +88,18 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
     setSubmitStatus({ loading: true, success: false, error: null });
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/send-email/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/send-email/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+          }),
+        },
+      );
 
       if (!response.ok) throw new Error("send_failed");
 

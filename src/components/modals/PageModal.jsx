@@ -12,41 +12,64 @@ const References = [
   { id: 4, name: "Makine ve Kimya Endüstrisi A.Ş", logo: "/logo/mke.png" },
   { id: 5, name: "Ermaksan ", logo: "/logo/ermaksan.png" },
   { id: 6, name: "Lingua Yayıncılık", logo: "/logo/lingua.png" },
-  { id: 7, name: "LenoWorks", logo: "/logo/lenoworks.png" },
 ];
+
+const getMediaUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+};
 
 const PdfPreview = ({ url }) => {
   const { t } = useTranslation();
   const [blobUrl, setBlobUrl] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (!url) return;
     let objUrl;
-    fetch(url)
-      .then((r) => r.blob())
+    const fullUrl = getMediaUrl(url);
+
+    fetch(fullUrl)
+      .then((r) => {
+        if (!r.ok) throw new Error("fetch failed");
+        return r.blob();
+      })
       .then((blob) => {
         objUrl = URL.createObjectURL(blob);
         setBlobUrl(objUrl);
       })
-      .catch(() => {});
+      .catch((e) => {
+        console.error("PDF Load Error:", e);
+        setError(true);
+      });
     return () => {
       if (objUrl) URL.revokeObjectURL(objUrl);
     };
   }, [url]);
 
-  if (!blobUrl)
+  if (error) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-        <svg
-          className="w-10 h-10 text-white/20"
-          fill="currentColor"
-          viewBox="0 0 24 24">
-          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17h8v1H8v-1zm0-3h8v1H8v-1zm0-3h5v1H8v-1z" />
+      <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
+        Yüklenemedi
+      </div>
+    );
+  }
+
+  if (!blobUrl) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 z-10">
+        <svg className="w-8 h-8 text-white/20 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <span className="text-white/20 text-xs tracking-widest">
+        <span className="text-white/20 text-[10px] tracking-widest uppercase">
           {t("ui.loading")}
         </span>
       </div>
     );
+  }
 
   return (
     <iframe
@@ -151,8 +174,9 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
 
             {activePage !== "hakkimizda" && (
               <h1
-                className={`font-display font-light text-white ${
-                  activePage === "urunlerimiz"
+                className={`font-display font-light text-white whitespace-pre-line ${
+                  activePage === "urunlerimiz" ||
+                  activePage === "sertifika-ve-patentler"
                     ? "text-2xl md:text-4xl tracking-[0.25em] md:tracking-[0.3em]"
                     : "text-3xl md:text-5xl tracking-[0.25em] md:tracking-[0.35em]"
                 } ${
@@ -412,50 +436,35 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
               {activePage === "sertifika-ve-patentler" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10 mt-8">
                   {certificates.map((cert, index) => (
-                    <motion.div
+                      <motion.div
                       key={cert.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex flex-col items-center bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-[#ffb800]/30 transition-all group cursor-pointer"
+                      className="relative w-full aspect-[0.65] max-w-[280px] mx-auto group cursor-pointer"
                       onClick={() =>
                         window.open(
                           cert.verification_link || cert.document,
                           "_blank",
                         )
                       }>
-                      <div className="w-full aspect-[1/1.4] relative mb-5 overflow-hidden rounded-lg bg-black/40">
+                      <div className="absolute inset-0 p-4 pb-12 bg-transparent flex items-center justify-center z-0">
                         {cert.document?.toLowerCase().endsWith(".pdf") ? (
                           <PdfPreview url={cert.document} />
                         ) : (
                           <img
-                            src={cert.document}
+                            src={getMediaUrl(cert.document)}
                             alt={cert.name}
-                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg p-2"
+                            className="w-full h-full object-contain"
                           />
                         )}
                       </div>
-                      <h3 className="font-display tracking-[0.1em] text-white/90 group-hover:text-white text-center text-sm md:text-base font-semibold">
-                        {cert.name}
-                      </h3>
-                      <p className="text-white/40 text-xs mt-1 tracking-wider">
-                        {cert.issued_by}
-                      </p>
-                      <span className="flex items-center gap-2 text-xs text-[#ffb800]/70 mt-3 tracking-widest group-hover:text-[#ffb800] transition-colors font-medium">
-                        <span>{t("ui.view_detail")}</span>
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </span>
+
+                      <div className="absolute bottom-[4%] left-0 right-0 flex items-center justify-center gap-1.5 px-4 text-[#ffb800] group-hover:text-white transition-colors duration-300 z-20 pointer-events-none">
+                        <span className="text-white text-[10px] sm:text-xs tracking-[0.1em] font-semibold uppercase truncate">
+                          {cert.name}
+                        </span>
+                      </div>
                     </motion.div>
                   ))}
                 </div>

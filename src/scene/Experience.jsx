@@ -10,6 +10,7 @@ import {
   Environment,
   Center,
   ContactShadows,
+  Ring,
 } from "@react-three/drei";
 import { Suspense, useRef } from "react";
 import * as THREE from "three";
@@ -63,14 +64,6 @@ export const Experience = () => {
           </group>
         </Center>
 
-        {selectedModel === "bee" &&
-          (selectedPart === "subtitle2" || selectedPart === "subtitle4") && (
-            <>
-              <SimulationObstacles showHUD={selectedPart === "subtitle4"} />
-              <WindParticles />
-            </>
-          )}
-
         <ContactShadows
           position={[0, -0.8, 0]}
           opacity={0.8}
@@ -82,6 +75,26 @@ export const Experience = () => {
           frames={1}
         />
 
+        {selectedPart === "subtitle2" && (
+          <group position={[0, -0.79, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            {/* Inner Ring */}
+            <Ring args={[0.9, 0.91, 64]}>
+              <meshBasicMaterial color="#ffb800" transparent opacity={0.6} side={THREE.DoubleSide} />
+            </Ring>
+            {/* Outer Ring */}
+            <Ring args={[1.25, 1.26, 64]}>
+              <meshBasicMaterial color="#ffb800" transparent opacity={0.4} side={THREE.DoubleSide} />
+            </Ring>
+
+            {/* Small accent dots on the rings */}
+            <mesh position={[0.905, 0, 0]}><circleGeometry args={[0.02, 16]} /><meshBasicMaterial color="#ffb800" transparent opacity={0.8} /></mesh>
+            <mesh position={[-0.905, 0, 0]}><circleGeometry args={[0.02, 16]} /><meshBasicMaterial color="#ffb800" transparent opacity={0.8} /></mesh>
+            
+            <mesh position={[0, 1.255, 0]}><circleGeometry args={[0.03, 16]} /><meshBasicMaterial color="#ffb800" transparent opacity={0.6} /></mesh>
+            <mesh position={[0, -1.255, 0]}><circleGeometry args={[0.03, 16]} /><meshBasicMaterial color="#ffb800" transparent opacity={0.6} /></mesh>
+          </group>
+        )}
+
         <OrbitControls
           ref={controlsRef}
           makeDefault
@@ -90,10 +103,16 @@ export const Experience = () => {
           minDistance={1}
           maxDistance={4}
           maxPolarAngle={Math.PI}
-          autoRotate={true}
+          autoRotate={selectedPart !== "subtitle2"}
           autoRotateSpeed={1}
         />
         {selectedModel === "bee" && <BeeController controlsRef={controlsRef} />}
+        
+        {selectedPart === "subtitle4" && (
+          <SimulationObstacles showHUD={true} />
+        )}
+        
+        <WindParticles count={150} />
       </Suspense>
     </Canvas>
   );

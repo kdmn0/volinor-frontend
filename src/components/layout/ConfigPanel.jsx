@@ -14,6 +14,7 @@ import { PageModal } from "../modals/PageModal";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnalysisOverlay } from "../feedback/AnalysisOverlay";
 import { useTranslation } from "react-i18next";
+import { SimulationOverlay } from "./SimulationOverlay";
 
 export const ConfigPanel = () => {
   const { t } = useTranslation();
@@ -66,19 +67,21 @@ export const ConfigPanel = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="absolute inset-0 pointer-events-none z-10">
           {/* Dairesel Seçim Menüsü */}
-          <CircularMenu
-            isNavOpen={isNavOpen}
-            setIsNavOpen={(val) => {
-              setIsNavOpen(val);
-              if (!val) {
-                navigate("/");
-                setActivePage(null);
-              }
-            }}
-            menuItems={menuItems}
-            selectedPart={selectedPart}
-            setSelectedPart={setSelectedPart}
-          />
+          {selectedPart !== "subtitle2" && (
+            <CircularMenu
+              isNavOpen={isNavOpen}
+              setIsNavOpen={(val) => {
+                setIsNavOpen(val);
+                if (!val) {
+                  navigate("/");
+                  setActivePage(null);
+                }
+              }}
+              menuItems={menuItems}
+              selectedPart={selectedPart}
+              setSelectedPart={setSelectedPart}
+            />
+          )}
 
           {/* Sol Açılır Menü */}
           <SidebarMenu
@@ -89,7 +92,7 @@ export const ConfigPanel = () => {
 
           {/* Sağ Seçili Eleman Bilgi Paneli */}
           <AnimatePresence>
-            {selectedPart && partData && (
+            {selectedPart && partData && selectedPart !== "subtitle2" && (
               <motion.div
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -102,40 +105,26 @@ export const ConfigPanel = () => {
                 <p className="text-gray-400 text-sm mb-2 md:mb-4 max-h-32 md:max-h-none overflow-y-auto md:overflow-visible pr-1">
                   {t(partData.descKey)}
                 </p>
-
-                {selectedPart === "subtitle1" && (
-                  <button
-                    onClick={toggleAnalysisMode}
-                    className={`w-full mt-2 flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-300 pointer-events-auto font-display font-semibold tracking-[0.18em] text-xs min-h-[44px] ${
-                      isAnalysisMode
-                        ? "border-[#ffb800]/50 text-[#ffb800] bg-[#ffb800]/5 shadow-[0_0_16px_rgba(255, 184, 0,0.12)]"
-                        : "border-amber-400/35 text-amber-300/90 bg-amber-400/5 hover:border-amber-400/60 hover:text-amber-200 hover:bg-amber-400/8 hover:shadow-[0_0_16px_rgba(251,191,36,0.1)]"
-                    }`}>
-                    <svg
-                      width="16" height="16" viewBox="0 0 16 16" fill="none"
-                      className={`shrink-0 transition-opacity duration-300 ${isAnalysisMode ? "opacity-100" : "opacity-75"}`}>
-                      {isAnalysisMode ? (
-                        <>
-                          <line x1="3" y1="3" x2="13" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                          <line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        </>
-                      ) : (
-                        <>
-                          <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1" />
-                          <line x1="8" y1="1" x2="8" y2="4.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                          <line x1="8" y1="11.5" x2="8" y2="15" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                          <line x1="1" y1="8" x2="4.5" y2="8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                          <line x1="11.5" y1="8" x2="15" y2="8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                          <circle cx="8" cy="8" r="1" fill="currentColor" />
-                        </>
-                      )}
-                    </svg>
-                    {isAnalysisMode ? t("menu.analysis_stop") : t("menu.analysis_start")}
-                  </button>
+                {selectedPart === "subtitle3" && (
+                  <div className="w-full mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[#ffb800] text-[10px] font-bold tracking-widest">DAYANIKLILIK</span>
+                      <span className="text-white text-xs">Yüksek</span>
+                    </div>
+                    <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: '92%' }}
+                        transition={{ delay: 0.5, duration: 1 }}
+                        className="h-full bg-gradient-to-r from-[#ffb800]/50 to-[#ffb800]"
+                      />
+                    </div>
+                  </div>
                 )}
 
+                {/* Ozvia Butonu (subtitle4'te gösterilir) */}
                 {selectedPart === "subtitle4" && (
-                  <a
+                  <a 
                     href="https://ozviai.com/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -149,6 +138,17 @@ export const ConfigPanel = () => {
                   </a>
                 )}
               </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Simülasyon Özel Arayüzü */}
+          <AnimatePresence>
+            {selectedPart === "subtitle2" && (
+              <SimulationOverlay onClose={() => {
+                setSelectedPart(null);
+                setActivePage(null);
+                navigate("/");
+              }} />
             )}
           </AnimatePresence>
 

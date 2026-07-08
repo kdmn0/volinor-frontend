@@ -134,7 +134,7 @@ export function BeeModel(props) {
 
     // --- Kanat Çırpma Hızını Kademeli Artırma ---
     const targetWingSpeed =
-      selectedPart === "subtitle2" || selectedPart === "subtitle4" ? 80 : 10;
+      selectedPart === "subtitle2" || selectedPart === "subtitle4" ? 45 : 10;
     // Hızı yumuşak bir şekilde (lerp) hedef hıza çekiyoruz
     currentWingSpeed.current = THREE.MathUtils.lerp(
       currentWingSpeed.current,
@@ -144,7 +144,6 @@ export function BeeModel(props) {
 
     if (selectedPart === "subtitle3") {
       // İleri Malzeme seçildiğinde kanatların en üst konumda durmasını sağla
-      // Bunun için kanat fazını (wingPhase) en yakın tepe noktasına (sin = 1) lerpliyoruz
       const PI_2 = Math.PI / 2;
       const TWO_PI = Math.PI * 2;
       const k = Math.round((wingPhase.current - PI_2) / TWO_PI);
@@ -182,7 +181,7 @@ export function BeeModel(props) {
         let targetX = 0;
         let targetY = 0;
         let targetRotZ = 0;
-        let targetRotX = Math.PI / 12; // Varsayılan: ileriye doğru hafifçe öne eğil
+        let targetRotX = 0; // İleri doğru eğilme kaldırıldı
 
         if (dodgeY !== 0) {
           // Yatay engel var, sadece Z ekseni bozulmadan yukarıya doğru yüksel
@@ -194,11 +193,11 @@ export function BeeModel(props) {
             dodgeX > 0.1 ? Math.PI / 8 : dodgeX < -0.1 ? -Math.PI / 8 : 0;
         }
 
-        // --- Rüzgar Efekti (Hafif Salınım) ---
-        targetX += Math.sin(elapsedTime * 2.5) * 0.08;
-        targetY += Math.cos(elapsedTime * 2.0) * 0.05;
-        targetRotZ += Math.sin(elapsedTime * 1.5) * 0.03;
-        targetRotX += Math.cos(elapsedTime * 1.8) * 0.03;
+        // --- Rüzgar Efekti (Hafif Salınım) Kapatıldı ---
+        // targetX += Math.sin(elapsedTime * 2.5) * 0.08;
+        // targetY += Math.cos(elapsedTime * 2.0) * 0.05;
+        // targetRotZ += Math.sin(elapsedTime * 1.5) * 0.03;
+        // targetRotX += Math.cos(elapsedTime * 1.8) * 0.03;
 
         groupRef.current.position.x = THREE.MathUtils.lerp(
           groupRef.current.position.x,

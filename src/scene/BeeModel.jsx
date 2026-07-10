@@ -4,9 +4,9 @@
  * Model üzerindeki animasyonları (kanat çırpma vb.) ve parçaların görünürlüğünü
  * (X-Ray şeffaflık modu gibi) `useFrame` ile frame (kare) bazlı yönetir.
  */
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import { useConfigStore } from "../store/useConfigStore";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -140,17 +140,48 @@ export function BeeModel(props) {
     });
   }, [scene]);
 
+  const targetRedParts = ["Component55", "Component48", "ARI SON v2 v6.079"];
+
+  const redMaterials = useMemo(() => {
+    const normalizeString = (str) => str.toLowerCase().replace(/[\s_.-]/g, "");
+    
+    const materials = {};
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        const isTarget = targetRedParts.some(partName => 
+          normalizeString(child.name).includes(normalizeString(partName))
+        );
+        if (isTarget && originalMaterials[child.uuid]) {
+          const mat = originalMaterials[child.uuid].clone();
+          // Orijinal metalik yüzeyin üzerine hafif kırmızı ton (renk ve parlama)
+          mat.color.set("#ff4d4d");
+          mat.emissive.set("#330000");
+          
+          // Alfasını (saydamlığını) düşürerek daha hafif bir efekt veriyoruz
+          mat.transparent = true;
+          mat.opacity = 0.5;
+          
+          materials[child.uuid] = mat;
+        }
+      }
+    });
+    return materials;
+  }, [scene, originalMaterials]);
+
   // Seçilen parçaya göre materyalleri güncelle
   useLayoutEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
-        child.material =
-          selectedPart === "subtitle1"
-            ? xrayMaterial
-            : originalMaterials[child.uuid];
+        if (selectedPart === "subtitle1") {
+          child.material = xrayMaterial;
+        } else if (selectedPart === "subtitle3" && redMaterials[child.uuid]) {
+          child.material = redMaterials[child.uuid];
+        } else {
+          child.material = originalMaterials[child.uuid];
+        }
       }
     });
-  }, [selectedPart, scene, originalMaterials, xrayMaterial]);
+  }, [selectedPart, scene, originalMaterials, xrayMaterial, redMaterials]);
 
   // Animasyon döngüsü (Sürekli olarak 60 dereceyi tarar ve simülasyon kaçışlarını yönetir)
   useFrame(({ clock }, delta) => {
@@ -281,10 +312,141 @@ export function BeeModel(props) {
   });
 
   return (
-    <group ref={groupRef} {...props}>
-      <primitive object={scene} />
-    </group>
+    <>
+      <group ref={groupRef} {...props}>
+        <primitive object={scene} />
+      </group>
+      <PartLabels explodeData={explodeData} selectedPart={selectedPart} />
+    </>
   );
 }
+
+const PartLabels = ({ explodeData, selectedPart }) => {
+  if (
+    selectedPart !== "subtitle3" ||
+    !explodeData.current ||
+    explodeData.current.length === 0
+  ) {
+    return null;
+  }
+
+  // 1. Etiketlerin Hangi Parçaya Bağlanacağını Belirliyoruz
+  // search: Parça isimlerinde aranacak kelimeler (ilk eşleşen alınır)
+  // offset: [X, Y, Z] eksenlerinde parçanın merkezinden ne kadar kaydırılacağı
+  const configs = [
+    {
+      text: "AERODİNAMİK KANAT",
+      search: ["Component6", "wing", "kanat"],
+      offset: [1, 0.5, 0],
+      direction: "right",
+    },
+    {
+      text: "SENSÖR / ANTEN",
+      search: ["antenna", "anten", "head", "kafa"],
+      offset: [-0.32, 0.15, 0.6],
+      direction: "right",
+    },
+    {
+      text: "MODÜLER BAĞLANTI",
+      search: ["joint", "leg", "bacak", "connect", "body"],
+      offset: [0.2, 0.19, -0.75],
+      direction: "left",
+    },
+  ];
+
+  const labels = [];
+
+  configs.forEach((config, idx) => {
+    let matchedData = null;
+
+    // Tanımlı kelimelere göre parçayı bulmaya çalış
+    for (const term of config.search) {
+      matchedData = explodeData.current.find((d) =>
+        d.mesh.name.toLowerCase().includes(term.toLowerCase()),
+      );
+      if (matchedData) break;
+    }
+
+    // Eğer kelimeyle eşleşen bir parça bulunamazsa, yedek olarak listeden aralıklı bir parça seç
+    if (!matchedData) {
+      const fallbackIndex = Math.floor(
+        (explodeData.current.length / configs.length) * idx,
+      );
+      matchedData = explodeData.current[fallbackIndex];
+    }
+
+    if (matchedData) {
+      labels.push({
+        mesh: matchedData.mesh,
+        text: config.text,
+        offset: config.offset,
+        direction: config.direction,
+      });
+    }
+  });
+
+  return (
+    <group>
+      {labels.map((item, i) => (
+        <ExplodedLabel
+          key={i}
+          mesh={item.mesh}
+          text={item.text}
+          offset={item.offset}
+          direction={item.direction}
+        />
+      ))}
+    </group>
+  );
+};
+
+const ExplodedLabel = ({
+  mesh,
+  text,
+  offset = [0, 0, 0],
+  direction = "right",
+}) => {
+  const ref = useRef();
+
+  useFrame(() => {
+    if (mesh && ref.current && ref.current.parent) {
+      const vec = new THREE.Vector3();
+      // 2. Parçanın dünya üzerindeki gerçek merkez konumunu al
+      mesh.getWorldPosition(vec);
+
+      // 3. Konumu grubun kendi eksenine çevir
+      ref.current.parent.worldToLocal(vec);
+
+      // 4. Yukarıdaki config'de verdiğiniz [X, Y, Z] ofsetini ekle
+      vec.x += offset[0];
+      vec.y += offset[1];
+      vec.z += offset[2];
+
+      ref.current.position.copy(vec);
+    }
+  });
+
+  return (
+    <group ref={ref}>
+      <Html center>
+        <div className="relative flex items-center justify-center group transition-opacity duration-500 hover:scale-110">
+          {/* Merkez Nokta */}
+          <div className="w-2 h-2 bg-[#ffb800] rounded-full shadow-[0_0_10px_#ffb800]"></div>
+
+          {/* Etiket Çizgisi ve Metin */}
+          <div
+            className={`absolute ${direction === "left" ? "right-1/2 flex-row-reverse" : "left-1/2"} flex items-center`}>
+            {/* Noktadan çıkan çizgi */}
+            <div
+              className={`w-8 h-[1px] bg-gradient-to-r ${direction === "left" ? "from-transparent to-[#ffb800] ml-2" : "from-[#ffb800] to-transparent mr-2"}`}></div>
+            <div className="font-display text-[10px] sm:text-xs font-bold tracking-widest text-[#ffb800] bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#ffb800]/30 whitespace-nowrap drop-shadow-[0_0_10px_rgba(255,184,0,0.5)] shadow-[0_0_15px_rgba(0,0,0,0.7)]">
+              {text}
+            </div>
+          </div>
+        </div>
+      </Html>
+    </group>
+  );
+};
 
 useGLTF.preload("/models/bee_compressed.glb");

@@ -200,5 +200,10 @@
     "priority_medium": "MEDIUM",
     "priority_low": "LOW",
     "risk_level": "RISK LEVEL"
+  },
+  "model_labels": {
+    "energy_wing": "ENERGY HARVESTING WING",
+    "rf_material": "RF 'TRANSPARENT' MATERIAL",
+    "high_modulus_composite": "HIGH MODULUS COMPOSITE"
   }
 }

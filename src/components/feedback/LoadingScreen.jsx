@@ -86,7 +86,7 @@ export const LoadingScreen = () => {
             justifyContent: "center",
             color: "#fff",
             backgroundColor: "#12151A",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C%2Ffilter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C%2Fsvg%3E"), radial-gradient(ellipse 100% 100% at 50% 50%, #3A4454 0%, #1E232B 50%, #12151A 100%), url(/background.png)`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C%2Ffilter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C%2Fsvg%3E"), radial-gradient(ellipse 100% 100% at 50% 50%, #3A4454 0%, #1E232B 50%, #12151A 100%), url(/img/main_background.png)`,
             backgroundSize: `200px 200px, auto, cover`,
             backgroundPosition: `0 0, 0 0, center`,
           }}>
@@ -141,7 +141,7 @@ export const LoadingScreen = () => {
                 margin: 0,
               }}>
               <img
-                src="/logo_yazı.png"
+                src="/img/volinor_yazı.png"
                 alt="Volinor Logo"
                 className="h-20 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
               />

@@ -119,7 +119,7 @@ function MainLayout() {
               className="absolute inset-0 z-[-1]"
             >
               <img
-                src="/background2.png"
+                src="/img/ai_background.png"
                 alt=""
                 className="w-full h-full object-cover"
                 style={{ transform: "scale(0.85)", transformOrigin: "center 60%" }}
@@ -194,7 +194,7 @@ function App() {
     <BrowserRouter>
       <div style={{
         position: 'fixed', inset: 0, zIndex: -1,
-        backgroundImage: 'url(/background.png)',
+        backgroundImage: 'url(/img/main_background.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

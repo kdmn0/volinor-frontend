@@ -17,6 +17,7 @@ export function BeeModel(props) {
   const body47Refs = useRef([]);
   const body63Refs = useRef([]);
   const groupRef = useRef();
+  const explodeData = useRef([]);
 
   // Kanat animasyonunun fazı ve hızı için referanslar (kademeli geçiş için)
   const wingPhase = useRef(0);
@@ -101,6 +102,7 @@ export function BeeModel(props) {
   useLayoutEffect(() => {
     body47Refs.current = [];
     body63Refs.current = [];
+    explodeData.current = [];
 
     scene.traverse((child) => {
       if (child.isMesh && child.name) {
@@ -109,6 +111,31 @@ export function BeeModel(props) {
         } else if (child.name.includes("Component55")) {
           body63Refs.current.push(child);
         }
+
+        // Patlama efekti için başlangıç pozisyonunu ve yönünü hesapla
+        if (!child.geometry.boundingBox) {
+          child.geometry.computeBoundingBox();
+        }
+        const center = new THREE.Vector3();
+        child.geometry.boundingBox.getCenter(center);
+
+        let dir = center.clone().normalize();
+        // Merkezde olan veya yönü belirsiz parçalar için rastgele yön ver
+        if (dir.lengthSq() < 0.001) {
+          dir
+            .set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)
+            .normalize();
+        }
+
+        // X ekseninde parçaların daha fazla ayrılması için X yönündeki şiddeti artır
+        dir.x *= 2.5;
+
+        explodeData.current.push({
+          mesh: child,
+          originalPos: child.position.clone(),
+          // Parçaları merkezden dışarı doğru oldukça uzağa it. Mesafe ayarlanabilir.
+          targetPos: child.position.clone().add(dir.multiplyScalar(60.0)),
+        });
       }
     });
   }, [scene]);
@@ -143,11 +170,11 @@ export function BeeModel(props) {
     );
 
     if (selectedPart === "subtitle3") {
-      // İleri Malzeme seçildiğinde kanatların en üst konumda durmasını sağla
-      const PI_2 = Math.PI / 2;
+      // İleri Malzeme seçildiğinde kanatların tamamen düz (yatay) durmasını sağla
+      const TARGET_REST = 0;
       const TWO_PI = Math.PI * 2;
-      const k = Math.round((wingPhase.current - PI_2) / TWO_PI);
-      const targetPhase = PI_2 + k * TWO_PI;
+      const k = Math.round((wingPhase.current - TARGET_REST) / TWO_PI);
+      const targetPhase = TARGET_REST + k * TWO_PI;
 
       wingPhase.current = THREE.MathUtils.lerp(
         wingPhase.current,
@@ -243,6 +270,14 @@ export function BeeModel(props) {
         );
       }
     }
+
+    // --- Patlama Efekti (Exploded View) ---
+    const isExploded = selectedPart === "subtitle3";
+    explodeData.current.forEach(({ mesh, originalPos, targetPos }) => {
+      const target = isExploded ? targetPos : originalPos;
+      // Parçaların pozisyonlarını hedefe doğru yumuşakça hareket ettir
+      mesh.position.lerp(target, 5 * delta);
+    });
   });
 
   return (

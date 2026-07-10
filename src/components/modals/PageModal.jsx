@@ -313,7 +313,7 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                       <div className="w-full lg:w-[40%] flex justify-center lg:justify-end mt-2 lg:mt-0">
                         <div className="relative w-full max-w-sm lg:max-w-[380px] rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,184,0,0.05)] border border-[#ffb800]/10 group">
                           <img
-                            src="/odtü-foto.jpeg"
+                            src="/img/odtü-foto.jpeg"
                             alt="ODTÜ"
                             className="w-full h-[300px] md:h-[530px] object-cover transition-transform duration-700 group-hover:scale-105"
                           />

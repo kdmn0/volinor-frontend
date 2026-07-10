@@ -170,8 +170,8 @@ const AuthPage = () => {
                     <div className="auth-noise-overlay"></div>
                     <div className="auth-brand-content">
                         <Link to="/" className="auth-logo" style={{ textDecoration: 'none' }}>
-                            <img src="/logo_kucuk.png" alt="Volinor Logo Icon" style={{ height: '32px', width: 'auto' }} />
-                            <img src="/logo_yazı.png" alt="Volinor" style={{ height: '36px', width: 'auto' }} />
+                            <img src="/img/volinor_kucuk.png" alt="Volinor Logo Icon" style={{ height: '32px', width: 'auto' }} />
+                            <img src="/img/volinor_yazı.png" alt="Volinor" style={{ height: '36px', width: 'auto' }} />
                         </Link>
                         <h1>{t('auth.tagline')}</h1>
                         <p>{t('auth.tagline_sub')}</p>

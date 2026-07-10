@@ -200,5 +200,10 @@
     "priority_medium": "ORTA",
     "priority_low": "DÜŞÜK",
     "risk_level": "RİSK SEVİYESİ"
+  },
+  "model_labels": {
+    "energy_wing": "ENERJİ HASATLAYICI KANAT",
+    "rf_material": "RF 'ŞEFFAF MALZEME'",
+    "high_modulus_composite": "YÜKSEK MODÜLLÜ KOMPOZİT"
   }
 }

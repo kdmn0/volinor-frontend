@@ -9,6 +9,7 @@ import { useConfigStore } from "../store/useConfigStore";
 import { useLayoutEffect, useMemo, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useTranslation } from "react-i18next";
 
 export function BeeModel(props) {
   const { scene } = useGLTF("/models/bee_compressed.glb");
@@ -144,23 +145,23 @@ export function BeeModel(props) {
 
   const redMaterials = useMemo(() => {
     const normalizeString = (str) => str.toLowerCase().replace(/[\s_.-]/g, "");
-    
+
     const materials = {};
     scene.traverse((child) => {
       if (child.isMesh) {
-        const isTarget = targetRedParts.some(partName => 
-          normalizeString(child.name).includes(normalizeString(partName))
+        const isTarget = targetRedParts.some((partName) =>
+          normalizeString(child.name).includes(normalizeString(partName)),
         );
         if (isTarget && originalMaterials[child.uuid]) {
           const mat = originalMaterials[child.uuid].clone();
           // Orijinal metalik yüzeyin üzerine hafif kırmızı ton (renk ve parlama)
           mat.color.set("#ff4d4d");
           mat.emissive.set("#330000");
-          
+
           // Alfasını (saydamlığını) düşürerek daha hafif bir efekt veriyoruz
           mat.transparent = true;
           mat.opacity = 0.5;
-          
+
           materials[child.uuid] = mat;
         }
       }
@@ -322,6 +323,8 @@ export function BeeModel(props) {
 }
 
 const PartLabels = ({ explodeData, selectedPart }) => {
+  const { t } = useTranslation();
+
   if (
     selectedPart !== "subtitle3" ||
     !explodeData.current ||
@@ -335,19 +338,19 @@ const PartLabels = ({ explodeData, selectedPart }) => {
   // offset: [X, Y, Z] eksenlerinde parçanın merkezinden ne kadar kaydırılacağı
   const configs = [
     {
-      text: "AERODİNAMİK KANAT",
+      text: t("model_labels.energy_wing"),
       search: ["Component6", "wing", "kanat"],
       offset: [1, 0.5, 0],
       direction: "right",
     },
     {
-      text: "SENSÖR / ANTEN",
+      text: t("model_labels.rf_material"),
       search: ["antenna", "anten", "head", "kafa"],
       offset: [-0.32, 0.15, 0.6],
       direction: "right",
     },
     {
-      text: "MODÜLER BAĞLANTI",
+      text: t("model_labels.high_modulus_composite"),
       search: ["joint", "leg", "bacak", "connect", "body"],
       offset: [0.2, 0.19, -0.75],
       direction: "left",

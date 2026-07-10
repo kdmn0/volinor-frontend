@@ -16,6 +16,7 @@ import { AnalysisOverlay } from "../feedback/AnalysisOverlay";
 import { useTranslation } from "react-i18next";
 import { SimulationOverlay } from "./SimulationOverlay";
 import { AIOverlay } from "./AIOverlay";
+import CurvedLoop from "../ui/CurvedLoop";
 
 export const ConfigPanel = () => {
   const { t } = useTranslation();
@@ -192,20 +193,31 @@ export const ConfigPanel = () => {
               {/* Ozvia Logo - sadece Yapay Zeka ekranında */}
               <AnimatePresence>
                 {selectedPart === "subtitle4" && (
-                  <a
-                    href="https://ozviai.com/"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <motion.img
-                      src="/img/ozvia_logo.png"
-                      alt="Ozvia Logo"
-                      initial={{ opacity: 0, x: -20, scale: 0.8 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: -20, scale: 0.8 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="h-8 md:h-12 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-80 transition-opacity"
-                    />
-                  </a>
+                  <div className="flex flex-col items-center relative">
+                    <a
+                      href="https://ozviai.com/"
+                      target="_blank"
+                      rel="noopener noreferrer">
+                      <motion.img
+                        src="/img/ozvia_logo.png"
+                        alt="Ozvia Logo"
+                        initial={{ opacity: 0, x: -20, scale: 0.8 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: -20, scale: 0.8 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="h-8 md:h-12 w-auto shrink-0 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-80 transition-opacity"
+                      />
+                    </a>
+                    <div className="w-32 md:w-48 absolute top-full mt-2 pointer-events-none">
+                      <CurvedLoop 
+                        marqueeText={t("model_labels.ozvia_ai_powered")}
+                        speed={3}
+                        curveAmount={0}
+                        interactive={false}
+                        className="fill-white text-[4rem] md:text-[6rem] font-display"
+                      />
+                    </div>
+                  </div>
                 )}
               </AnimatePresence>
               {/* Volinor Logo */}

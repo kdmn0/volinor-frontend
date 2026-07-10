@@ -248,7 +248,7 @@ export const ConfigPanel = () => {
                         speed={3}
                         curveAmount={0}
                         interactive={false}
-                        className="fill-white text-[4rem] md:text-[8rem] font-display"
+                        className="fill-white text-[4.5rem] md:text-[8.5rem] font-display"
                       />
                     </div>
                   </div>

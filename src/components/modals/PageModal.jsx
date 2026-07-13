@@ -181,7 +181,8 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                     : "text-3xl md:text-5xl tracking-[0.25em] md:tracking-[0.35em]"
                 } ${
                   activePage === "iletisim" ||
-                  activePage === "model-kutuphanesi"
+                  activePage === "model-kutuphanesi" ||
+                  activePage === "urunlerimiz"
                     ? "sr-only"
                     : "mb-4 md:mb-6"
                 }`}>

@@ -120,7 +120,7 @@ export default function ProductDetailPage() {
       <div className="w-full h-[45vh] md:w-3/5 md:h-full relative bg-gradient-to-br from-[#0a0a0a] to-[#000000] border-b md:border-b-0 md:border-r border-white/10 shrink-0">
         <div className="absolute top-6 left-6 z-10">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/urunlerimiz')}
             className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-sm font-medium backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

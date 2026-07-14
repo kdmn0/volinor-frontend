@@ -13,7 +13,7 @@ export const DealershipSlider = () => {
       desc: `${t("dealerships.dechamps_desc1")}\n\n${t("dealerships.dechamps_desc2")}`,
       image: "/logo/dechamps.png", 
       url: "https://www.deschamps-systems.com/",
-      video: "https://www.youtube.com/embed/ajXLjjIbrG0?start=15&autoplay=1&mute=1"
+      video: "https://www.youtube.com/embed/ajXLjjIbrG0?start=15"
     },
     /*
     {

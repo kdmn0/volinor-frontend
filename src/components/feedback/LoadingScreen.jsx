@@ -26,6 +26,16 @@ export const LoadingScreen = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Sertifikaları önceden yükle
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/certificates/`)
+      .then((r) => r.json())
+      .then((data) => {
+        localStorage.setItem("volinor_certificates", JSON.stringify(data));
+      })
+      .catch(() => {});
+  }, []);
+
   // Yumuşak ilerleme animasyonu — doğrudan DOM güncellemesi yapılır (React re-render tetiklemez)
   useEffect(() => {
     const duration = 1500;

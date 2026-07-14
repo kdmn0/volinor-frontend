@@ -90,11 +90,23 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
 
   useEffect(() => {
     if (activePage === "sertifika-ve-patentler") {
+      const cached = localStorage.getItem("volinor_certificates");
+      if (cached) {
+        try {
+          setCertificates(JSON.parse(cached));
+        } catch (e) {
+          // ignore parsing error
+        }
+      }
+
       fetch(
         `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/certificates/`,
       )
         .then((r) => r.json())
-        .then(setCertificates)
+        .then((data) => {
+          setCertificates(data);
+          localStorage.setItem("volinor_certificates", JSON.stringify(data));
+        })
         .catch(() => {});
     }
   }, [activePage]);

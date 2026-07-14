@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VideoLibrary from "../../pages/VideoLibrary";
 import ProductsSlider from "./ProductsSlider";
+import DealershipSlider from "./DealershipSlider";
 
 const References = [
   { id: 1, name: "Kara Kuvvetleri Komutanlığı", logo: "/logo/kara.png" },
@@ -147,7 +148,8 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
     activePage === "video-kutuphanesi" ||
     activePage === "sertifika-ve-patentler" ||
     activePage === "iletisim" ||
-    activePage === "hakkimizda";
+    activePage === "hakkimizda" ||
+    activePage === "bayiliklerimiz";
 
   return (
     <AnimatePresence>
@@ -182,12 +184,19 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                 } ${
                   activePage === "iletisim" ||
                   activePage === "model-kutuphanesi" ||
-                  activePage === "urunlerimiz"
+                  activePage === "urunlerimiz" ||
+                  activePage === "bayiliklerimiz"
                     ? "sr-only"
                     : "mb-4 md:mb-6"
                 }`}>
                 {t(`pages.${activePage}`, activePage)}
               </h1>
+            )}
+
+            {activePage === "video-kutuphanesi" && (
+              <p className="text-white/70 text-sm md:text-base font-light max-w-3xl leading-relaxed mb-6">
+                Kurumlar ve firmalar için gerçekleştirdiğimiz animasyon çalışmalarına göz atın. Ürünlerinizi tanıtmak, kullanımını kolaylaştırmak ve anlaşılmasını sağlamak için animasyon, simülasyon ve dijital ikiz uygulamalarımızdan faydalanabilirsiniz..
+              </p>
             )}
 
             <div className="text-white/60 text-base md:text-lg font-light leading-relaxed">
@@ -500,6 +509,11 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                       )}
                     </motion.div>
                   ))}
+                </div>
+              )}
+              {activePage === "bayiliklerimiz" && (
+                <div className="w-full mt-4 md:mt-6">
+                  <DealershipSlider />
                 </div>
               )}
               {activePage === "video-kutuphanesi" && (

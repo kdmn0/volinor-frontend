@@ -1,54 +1,43 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useTranslation } from "react-i18next";
 
-export const ProductsSlider = () => {
-  const [products, setProducts] = useState([]);
+export const DealershipSlider = () => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/products/`)
-      .then((res) => {
-        setProducts(res.data);
-      })
-      .catch((err) => {
-        console.error("Ürünler yüklenirken hata oluştu:", err);
-      });
-  }, []);
+  const dealerships = [
+    {
+      id: "dechamps",
+      name: t("dealerships.dechamps_name"),
+      desc: `${t("dealerships.dechamps_desc1")}\n\n${t("dealerships.dechamps_desc2")}`,
+      image: "/logo/dechamps.png", 
+    },
+    {
+      id: "penta",
+      name: t("dealerships.penta_name"),
+      desc: `${t("dealerships.penta_desc1")}\n\n${t("dealerships.penta_desc2")}`,
+      image: "/logo/penta.png", 
+    },
+  ];
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev === dealerships.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? dealerships.length - 1 : prev - 1));
   };
 
   useEffect(() => {
-    if (products.length === 0) return;
+    if (dealerships.length === 0) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 6000);
     return () => clearInterval(timer);
-  }, [currentIndex, products.length]);
+  }, [currentIndex, dealerships.length]);
 
-  if (products.length === 0) {
-    return (
-      <div className="relative w-full h-[600px] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 opacity-50">
-          <svg className="w-8 h-8 animate-spin text-[#ffb800]" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span className="text-sm tracking-widest font-semibold uppercase text-white">YÜKLENİYOR...</span>
-        </div>
-      </div>
-    );
-  }
-
-  const currentProduct = products[currentIndex];
+  const currentItem = dealerships[currentIndex];
 
   return (
     <div className="relative w-full min-h-[600px] h-[75vh] bg-transparent flex flex-col pt-8 md:pt-12 px-4 md:px-12 lg:px-24 select-none border border-white/5 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent">
@@ -60,18 +49,14 @@ export const ProductsSlider = () => {
           className="absolute inset-0 bg-cover bg-center opacity-60" 
           style={{ backgroundImage: "url('/img/product_background.png')" }}
         ></div>
-
       </div>
 
       {/* TOP HEADER */}
       <div className="relative z-20 flex justify-between items-start mb-8 md:mb-0 mt-4 md:mt-0">
         <div>
           <h1 className="text-3xl md:text-5xl font-display font-light tracking-[0.25em] md:tracking-[0.3em] uppercase drop-shadow-md">
-            <span className="text-white">ÜRÜN</span><span className="text-[#ffb800]">LERİMİZ</span>
+            <span className="text-white">BAYİ</span><span className="text-[#ffb800]">LİKLERİMİZ</span>
           </h1>
-          <p className="text-white/40 text-xs md:text-sm mt-3 font-medium max-w-xl tracking-wider leading-relaxed">
-            Kalite sayfasına ulaştınız. Off the shelf hazır ürünlerimiz ve ar-ge ürünleri ile hizmetinizdeyiz.
-          </p>
         </div>
         {/* 3x3 dot grid icon */}
         <div className="hidden md:grid grid-cols-3 gap-1 opacity-80 mt-2">
@@ -96,28 +81,14 @@ export const ProductsSlider = () => {
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <h2 className="text-5xl md:text-5xl lg:text-7xl font-display font-bold text-white mb-6 uppercase tracking-widest drop-shadow-lg">
-                {currentProduct.title}
+                {currentItem.name}
               </h2>
               
               <div className="w-12 h-0.5 bg-white/20 mb-6"></div>
 
-              <p className="text-white/60 text-sm leading-relaxed mb-10 max-w-sm font-light">
-                {currentProduct.description}
+              <p className="text-white/60 text-sm leading-relaxed mb-10 max-w-sm font-light whitespace-pre-line">
+                {currentItem.desc}
               </p>
-
-              <button 
-                className="bg-[#ffb800] text-black font-bold text-sm tracking-widest px-8 py-3 md:py-4 transition-transform hover:scale-105 active:scale-95 group relative flex items-center justify-center gap-3 w-max"
-                style={{ clipPath: 'polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%)' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/urunler/${currentProduct.slug}`);
-                }}
-              >
-                DETAYLARI GÖRÜNTÜLE
-                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -127,13 +98,17 @@ export const ProductsSlider = () => {
           <AnimatePresence mode="wait">
             <motion.img
               key={`img-${currentIndex}`}
-              src={currentProduct.image}
-              alt={currentProduct.title}
+              src={currentItem.image}
+              alt={currentItem.name}
               initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
               transition={{ duration: 0.7, ease: "easeInOut" }}
               className="w-full h-full object-contain max-h-[500px] md:max-h-[600px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              onError={(e) => {
+                // If logo not found, hide it to prevent broken image icon
+                e.target.style.display = 'none';
+              }}
             />
           </AnimatePresence>
         </div>
@@ -181,7 +156,7 @@ export const ProductsSlider = () => {
 
       {/* PAGINATION LINES */}
       <div className="absolute bottom-6 right-1/2 translate-x-1/2 md:bottom-10 md:right-16 md:translate-x-0 flex items-center gap-2 z-30">
-        {products.map((_, idx) => (
+        {dealerships.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
@@ -196,10 +171,8 @@ export const ProductsSlider = () => {
       <div className="hidden md:block absolute top-6 left-6 w-8 h-8 border-t-[1.5px] border-l-[1.5px] border-[#ffb800]/40 z-20 pointer-events-none" />
       <div className="hidden md:block absolute bottom-6 right-6 w-8 h-8 border-b-[1.5px] border-r-[1.5px] border-[#ffb800]/40 z-20 pointer-events-none" />
       
-
-      
     </div>
   );
 };
 
-export default ProductsSlider;
+export default DealershipSlider;

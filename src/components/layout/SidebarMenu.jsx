@@ -8,6 +8,7 @@ export const SidebarMenu = ({ isNavOpen, activePage, setActivePage }) => {
   const NAV_ITEMS = [
     { label: t("nav.about"), url: "/hakkimizda", id: "hakkimizda" },
     { label: t("nav.products"), url: "/urunlerimiz", id: "urunlerimiz" },
+    { label: t("nav.dealership"), url: "/bayiliklerimiz", id: "bayiliklerimiz"},
     { label: t("nav.modelLibrary"), url: "/model-kutuphanesi", id: "model-kutuphanesi" },
     { label: t("nav.videoLibrary"), url: "/video-kutuphanesi", id: "video-kutuphanesi" },
     { label: t("nav.references"), url: "/referanslar", id: "referanslar" },
@@ -23,7 +24,7 @@ export const SidebarMenu = ({ isNavOpen, activePage, setActivePage }) => {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -300, opacity: 0 }}
           transition={{ type: "spring", damping: 30, stiffness: 200 }}
-          className="absolute top-0 left-0 w-full md:w-[300px] h-full bg-black/90 md:bg-black/60 backdrop-blur-xl border-r border-[#ffb800]/20 shadow-[10px_0_30px_rgba(255, 184, 0,0.05)] z-40 flex flex-col justify-center gap-3 md:gap-6 pl-8 md:pl-12 pr-6 pointer-events-auto overflow-y-auto pt-20 pb-10">
+          className="absolute top-0 left-0 w-full md:w-[300px] h-full bg-black/90 md:bg-black/60 backdrop-blur-xl border-r border-[#ffb800]/20 shadow-[10px_0_30px_rgba(255, 184, 0,0.05)] z-40 flex flex-col justify-center gap-3 md:gap-6 pl-8 md:pl-12 pr-6 pointer-events-auto overflow-y-auto pt-20 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {NAV_ITEMS.map((item, i) => {
             const isActive = activePage === item.id || activePage === item.label;
             return (

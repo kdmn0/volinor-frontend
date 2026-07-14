@@ -2,6 +2,7 @@
   "nav": {
     "about": "HAKKIMIZDA",
     "products": "ÜRÜNLERİMİZ",
+    "dealership": "BAYİLİKLERİMİZ",
     "modelLibrary": "MODEL KÜTÜPHANESİ",
     "videoLibrary": "VİDEO KÜTÜPHANESİ",
     "references": "REFERANSLAR",
@@ -46,7 +47,8 @@
     "referanslar": "REFERANSLAR",
     "iletisim": "İLETİŞİM",
     "model-kutuphanesi": "MODEL KÜTÜPHANESİ",
-    "video-kutuphanesi": "VİDEO KÜTÜPHANESİ"
+    "video-kutuphanesi": "VİDEO KÜTÜPHANESİ",
+    "bayiliklerimiz": "BAYİLİKLERİMİZ"
   },
   "seo": {
     "default_title": "Volinor | İleri Teknoloji Çözümleri",
@@ -105,8 +107,8 @@
   },
   "auth": {
     "back_home": "Ana Sayfaya Dön",
-    "tagline": "Dijital varlıklarınızı güvenle yönetin.",
-    "tagline_sub": "Yeni nesil bulut altyapısı ile projelerinizi saniyeler içinde hayata geçirin.",
+    "tagline": "Model Kütüphanesi",
+    "tagline_sub": "Bazı modellerimizi, ticari olmayan kullanım amaçları için siz değerli ziyaretçilerimizin erişimine sunuyoruz.",
     "login_title": "Hoş geldiniz",
     "login_subtitle": "Hesabınıza giriş yaparak devam edin.",
     "email_label": "E-posta adresi",
@@ -206,5 +208,13 @@
     "rf_material": "RF 'ŞEFFAF MALZEME'",
     "high_modulus_composite": "YÜKSEK MODÜLLÜ\nKOMPOZİT",
     "ozvia_ai_powered": "✦ Kurumlar İçin Yapay Zeka Asistanı"
+  },
+  "dealerships": {
+    "dechamps_name": "DeChamps Systems",
+    "dechamps_desc1": "1994'ten beri yüksek kaliteli mobilite sistemleri üreten DeChamps Systems, mobil helikopter iniş pedlerinde dünya lideridir.",
+    "dechamps_desc2": "VOLİNOR, DeChamps TAHEL Helipad™ taktik helikopter iniş pedlerinin yetkili satıcısıdır.",
+    "penta_name": "Penta Digital",
+    "penta_desc1": "40'ın üzerinde teknoloji markasının Türkiye dağıtıcılığını yapan Penta Türkiye, sektör lideri ürünlere erişim sağlamaktadır.",
+    "penta_desc2": "IBM, Asus, HP, Acer, Brother, Canon, Xerox gibi markaların ürünleri için bizimle temasa geçin."
   }
 }

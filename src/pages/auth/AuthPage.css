@@ -1,15 +1,15 @@
 :root {
-    --auth-bg-base: #09090b;
-    --auth-bg-surface: #18181b;
-    --auth-bg-surface-hover: #27272a;
-    --auth-border-subtle: #27272a;
-    --auth-border-hover: #3f3f46;
-    --auth-text-main: #fafafa;
-    --auth-text-muted: #a1a1aa;
-    --auth-accent-glow: rgba(59, 130, 246, 0.4);
-    --auth-accent-primary: #3b82f6;
-    --auth-accent-secondary: #1d4ed8;
-    --auth-focus-ring: rgba(59, 130, 246, 0.5);
+    --auth-bg-base: #0a0a0a;
+    --auth-bg-surface: #111111;
+    --auth-bg-surface-hover: #1a1a1a;
+    --auth-border-subtle: rgba(255, 255, 255, 0.1);
+    --auth-border-hover: rgba(255, 184, 0, 0.5);
+    --auth-text-main: #ffffff;
+    --auth-text-muted: rgba(255, 255, 255, 0.5);
+    --auth-accent-glow: rgba(255, 184, 0, 0.15);
+    --auth-accent-primary: #ffb800;
+    --auth-accent-secondary: #e5a500;
+    --auth-focus-ring: rgba(255, 184, 0, 0.3);
     
     --auth-radius-lg: 16px;
     --auth-radius-md: 12px;
@@ -30,18 +30,20 @@
 }
 
 .auth-page-wrapper h1 {
+    font-family: 'Rajdhani', sans-serif;
     font-size: 3rem;
     font-weight: 600;
     line-height: 1.1;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.05em;
     margin-bottom: 1rem;
     color: var(--auth-text-main);
 }
 
 .auth-page-wrapper h2 {
+    font-family: 'Rajdhani', sans-serif;
     font-size: 2rem;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
     color: var(--auth-text-main);
 }
@@ -335,7 +337,7 @@
 
 .auth-submit-btn:hover {
     filter: brightness(1.1);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 184, 0, 0.3);
     transform: translateY(-1px);
 }
 

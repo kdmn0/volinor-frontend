@@ -59,17 +59,14 @@ const ModelDetailPage = () => {
   }, [id]);
 
   const handleDownload = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      setLoginWarning(true);
-      return;
-    }
     setLoginWarning(false);
-
     setDownloading(true);
     try {
+      const token = localStorage.getItem("access_token");
+      const headers = token ? { Authorization: `Token ${token}` } : {};
+      
       const res = await axios.get(`${API}/api/models/${id}/download/`, {
-        headers: { Authorization: `Token ${token}` },
+        headers,
         responseType: "blob",
       });
 

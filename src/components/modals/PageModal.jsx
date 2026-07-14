@@ -15,61 +15,26 @@ const getMediaUrl = (url) => {
 };
 
 const PdfPreview = ({ url }) => {
-  const { t } = useTranslation();
-  const [blobUrl, setBlobUrl] = useState(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (!url) return;
-    let objUrl;
-    const fullUrl = getMediaUrl(url);
-
-    fetch(fullUrl)
-      .then((r) => {
-        if (!r.ok) throw new Error("fetch failed");
-        return r.blob();
-      })
-      .then((blob) => {
-        objUrl = URL.createObjectURL(blob);
-        setBlobUrl(objUrl);
-      })
-      .catch((e) => {
-        console.error("PDF Load Error:", e);
-        setError(true);
-      });
-    return () => {
-      if (objUrl) URL.revokeObjectURL(objUrl);
-    };
-  }, [url]);
-
-  if (error) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
-        Yüklenemedi
-      </div>
-    );
-  }
-
-  if (!blobUrl) {
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 z-10">
-        <svg className="w-8 h-8 text-white/20 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span className="text-white/20 text-[10px] tracking-widest uppercase">
-          {t("ui.loading")}
-        </span>
-      </div>
-    );
-  }
+  const [loaded, setLoaded] = useState(false);
+  const fullUrl = getMediaUrl(url);
 
   return (
-    <iframe
-      src={`${blobUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-      title="pdf-preview"
-      className="w-full h-full border-0 pointer-events-none"
-    />
+    <div className="relative w-full h-full">
+      {!loaded && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 z-10 pointer-events-none">
+          <svg className="w-8 h-8 text-white/20 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      )}
+      <iframe
+        src={`${fullUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+        title="pdf-preview"
+        onLoad={() => setLoaded(true)}
+        className="w-full h-full border-0 pointer-events-none"
+      />
+    </div>
   );
 };
 
@@ -93,10 +58,12 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
       const cached = localStorage.getItem("volinor_certificates");
       if (cached) {
         try {
-          setCertificates(JSON.parse(cached));
-        } catch (e) {
-          // ignore parsing error
-        }
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.length > 0) {
+            setCertificates(parsed);
+            return;
+          }
+        } catch (e) {}
       }
 
       fetch(

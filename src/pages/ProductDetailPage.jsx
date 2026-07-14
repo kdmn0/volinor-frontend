@@ -1,78 +1,22 @@
-import { Suspense, useState, useEffect, useLayoutEffect } from 'react';
-import * as THREE from 'three';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html, useGLTF } from '@react-three/drei';
 import { motion } from 'motion/react';
 import axios from 'axios';
-
-const RealModel = ({ url }) => {
-  const { scene } = useGLTF(url);
-  
-  useLayoutEffect(() => {
-    if (!scene) return;
-    
-    // Calculate the bounding box of the model
-    const box = new THREE.Box3().setFromObject(scene);
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    
-    // Set a target maximum size for all models (e.g., 4 units)
-    const targetSize = 4; 
-    
-    if (maxDim > 0) {
-      const scale = targetSize / maxDim;
-      scene.scale.setScalar(scale);
-      
-      // Center the model perfectly in the scene
-      const center = box.getCenter(new THREE.Vector3());
-      scene.position.sub(center.multiplyScalar(scale));
-    }
-  }, [scene]);
-
-  return <primitive object={scene} />;
-};
-
-// 3D Model Placeholder or Actual Loader
-const ModelViewer = ({ modelPath }) => {
-  if (modelPath) {
-    return <RealModel url={modelPath} />;
-  }
-
-  // Şimdilik geçici, teknolojik görünümlü bir dönen placeholder:
-  return (
-    <group>
-      <mesh>
-        <boxGeometry args={[1.5, 1.5, 1.5]} />
-        <meshStandardMaterial color="#ffb800" wireframe opacity={0.3} transparent />
-      </mesh>
-      <mesh>
-        <octahedronGeometry args={[0.8, 0]} />
-        <meshStandardMaterial color="#ffffff" metalness={0.8} roughness={0.2} />
-      </mesh>
-    </group>
-  );
-};
-
-const Loader = () => {
-  return (
-    <Html center>
-      <div className="flex flex-col items-center justify-center text-[#ffb800] bg-[#0a0a0a]/80 p-6 rounded-2xl backdrop-blur-xl border border-[#ffb800]/20 whitespace-nowrap shadow-[0_0_30px_rgba(255, 184, 0,0.15)]">
-        <svg className="w-8 h-8 animate-spin mb-3" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span className="font-medium text-xs tracking-[0.2em] uppercase">3D Model Yükleniyor</span>
-      </div>
-    </Html>
-  );
-};
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  
+  useEffect(() => {
+    if (product?.image && !selectedImage) {
+      setSelectedImage(product.image);
+    }
+  }, [product]);
+
+  const allImages = product ? [product.image, ...(product.images?.map(img => img.image) || [])].filter(Boolean) : [];
   
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/products/${slug}/`)
@@ -116,8 +60,8 @@ export default function ProductDetailPage() {
   return (
     <div className="w-full h-[100dvh] bg-[#0a0a0a] text-white flex flex-col md:flex-row overflow-hidden font-sans">
       
-      {/* Sol Kısım: 3D Görüntüleyici */}
-      <div className="w-full h-[45vh] md:w-3/5 md:h-full relative bg-gradient-to-br from-[#0a0a0a] to-[#000000] border-b md:border-b-0 md:border-r border-white/10 shrink-0">
+      {/* Sol Kısım: Ürün Görseli */}
+      <div className="w-full h-[45vh] md:w-3/5 md:h-full relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border-b md:border-b-0 md:border-r border-white/10 shrink-0 flex items-center justify-center p-6 md:p-12">
         <div className="absolute top-6 left-6 z-10">
           <button 
             onClick={() => navigate('/urunlerimiz')}
@@ -130,23 +74,75 @@ export default function ProductDetailPage() {
           </button>
         </div>
         
-        <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
-          <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-          <Environment preset="city" />
-          <Suspense fallback={<Loader />}>
-             <ModelViewer modelPath={product.model_file} />
-             <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-          </Suspense>
-          <OrbitControls autoRotate autoRotateSpeed={2} enablePan={false} enableZoom={true} minDistance={2} maxDistance={10} />
-        </Canvas>
-        
-        <div className="absolute bottom-6 right-6 text-white/40 text-xs flex items-center gap-2 pointer-events-none">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-          </svg>
-          Döndürmek için sürükleyin
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full h-full relative flex flex-col items-center justify-center gap-6"
+        >
+          {selectedImage ? (
+            <div className="flex-1 w-full relative flex items-center justify-center min-h-0 group/gallery">
+              
+              {/* Sol Buton (Önceki) */}
+              {allImages.length > 1 && (
+                <button 
+                  onClick={() => {
+                    const idx = allImages.indexOf(selectedImage);
+                    setSelectedImage(allImages[(idx - 1 + allImages.length) % allImages.length]);
+                  }}
+                  className="absolute left-2 md:left-6 p-2 md:p-3 bg-black/50 hover:bg-[#ffb800] text-white hover:text-black rounded-full backdrop-blur-sm transition-all opacity-0 group-hover/gallery:opacity-100 z-10"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+
+              <img 
+                src={selectedImage} 
+                alt={product.title} 
+                className="max-w-full max-h-full object-contain rounded-lg transition-all duration-300"
+              />
+
+              {/* Sağ Buton (Sonraki) */}
+              {allImages.length > 1 && (
+                <button 
+                  onClick={() => {
+                    const idx = allImages.indexOf(selectedImage);
+                    setSelectedImage(allImages[(idx + 1) % allImages.length]);
+                  }}
+                  className="absolute right-2 md:right-6 p-2 md:p-3 bg-black/50 hover:bg-[#ffb800] text-white hover:text-black rounded-full backdrop-blur-sm transition-all opacity-0 group-hover/gallery:opacity-100 z-10"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+
+            </div>
+          ) : (
+            <div className="flex-1 w-full flex flex-col items-center justify-center text-white/30">
+              <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p>Görsel Bulunamadı</p>
+            </div>
+          )}
+
+          {allImages.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto pb-2 w-full justify-start md:justify-center px-4 custom-scrollbar shrink-0">
+              {allImages.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(img)}
+                  className={`relative w-20 h-20 shrink-0 rounded-md overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-[#ffb800] scale-105' : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'}`}
+                >
+                  <img src={img} alt={`thumbnail-${idx}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </motion.div>
       </div>
 
       {/* Sağ Kısım: Ürün Bilgileri */}

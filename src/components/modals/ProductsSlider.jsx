@@ -95,7 +95,7 @@ export const ProductsSlider = () => {
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <h2 className="text-5xl md:text-5xl lg:text-7xl font-display font-bold text-white mb-6 uppercase tracking-widest drop-shadow-lg">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-6 uppercase tracking-widest drop-shadow-lg">
                 {currentProduct.title}
               </h2>
               

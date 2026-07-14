@@ -12,13 +12,17 @@ export const DealershipSlider = () => {
       name: t("dealerships.dechamps_name"),
       desc: `${t("dealerships.dechamps_desc1")}\n\n${t("dealerships.dechamps_desc2")}`,
       image: "/logo/dechamps.png", 
+      url: "https://www.deschamps-systems.com/",
+      video: "https://www.youtube.com/embed/ajXLjjIbrG0?start=15&autoplay=1&mute=1"
     },
+    /*
     {
       id: "penta",
       name: t("dealerships.penta_name"),
       desc: `${t("dealerships.penta_desc1")}\n\n${t("dealerships.penta_desc2")}`,
       image: "/logo/penta.png", 
     },
+    */
   ];
 
   const nextSlide = () => {
@@ -86,30 +90,61 @@ export const DealershipSlider = () => {
               
               <div className="w-12 h-0.5 bg-white/20 mb-6"></div>
 
-              <p className="text-white/60 text-sm leading-relaxed mb-10 max-w-sm font-light whitespace-pre-line">
+              <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-sm font-light whitespace-pre-line">
                 {currentItem.desc}
               </p>
+              {currentItem.url && (
+                <a 
+                  href={currentItem.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-[#ffb800] hover:text-white transition-colors text-sm font-medium tracking-wider"
+                >
+                  {currentItem.url}
+                </a>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* CENTER/RIGHT SIDE: Image */}
-        <div className="w-full md:w-1/2 lg:w-2/3 h-[40vh] md:h-full flex items-center justify-center z-10 pointer-events-none mt-8 md:mt-0">
+        {/* CENTER/RIGHT SIDE: Image or Video */}
+        <div className="w-full md:w-1/2 lg:w-2/3 h-[40vh] md:h-full flex items-center justify-center z-10 mt-8 md:mt-0 relative pointer-events-auto px-2 md:px-8">
           <AnimatePresence mode="wait">
-            <motion.img
-              key={`img-${currentIndex}`}
-              src={currentItem.image}
-              alt={currentItem.name}
-              initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
-              transition={{ duration: 0.7, ease: "easeInOut" }}
-              className="w-full h-full object-contain max-h-[500px] md:max-h-[600px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-              onError={(e) => {
-                // If logo not found, hide it to prevent broken image icon
-                e.target.style.display = 'none';
-              }}
-            />
+            {currentItem.video ? (
+              <motion.div
+                key={`vid-${currentIndex}`}
+                initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+                className="w-full max-w-3xl aspect-video rounded-2xl overflow-hidden drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/10 shadow-[0_0_30px_rgba(255,184,0,0.1)]"
+              >
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={currentItem.video}
+                  title={currentItem.name}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full object-cover"
+                ></iframe>
+              </motion.div>
+            ) : (
+              <motion.img
+                key={`img-${currentIndex}`}
+                src={currentItem.image}
+                alt={currentItem.name}
+                initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+                className="w-full h-full object-contain max-h-[500px] md:max-h-[600px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-none"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            )}
           </AnimatePresence>
         </div>
 

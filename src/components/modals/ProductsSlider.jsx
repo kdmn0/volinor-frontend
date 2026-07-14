@@ -69,7 +69,7 @@ export const ProductsSlider = () => {
       <div className="relative z-20 flex justify-between items-start mb-8 md:mb-0 mt-4 md:mt-0">
         <div>
           <h1 className="text-3xl md:text-5xl font-display font-light tracking-[0.25em] md:tracking-[0.3em] uppercase drop-shadow-md">
-            <span className="text-white">ÜRÜN</span><span className="text-[#ffb800]">LERİMİZ</span>
+            <span className="text-white">{t("pages.urunlerimiz_title_1")}</span><span className="text-[#ffb800]">{t("pages.urunlerimiz_title_2")}</span>
           </h1>
           <p className="text-white/40 text-xs md:text-sm mt-3 font-medium max-w-xl tracking-wider leading-relaxed">
             {t("pages.urunlerimiz_desc")}
@@ -115,7 +115,7 @@ export const ProductsSlider = () => {
                   navigate(`/urunler/${currentProduct.slug}`);
                 }}
               >
-                DETAYLARI GÖRÜNTÜLE
+                {t("ui.view_detail")}
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>

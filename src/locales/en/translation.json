@@ -43,6 +43,8 @@
   "pages": {
     "hakkimizda": "ABOUT US",
     "urunlerimiz": "OUR PRODUCTS",
+    "urunlerimiz_title_1": "OUR ",
+    "urunlerimiz_title_2": "PRODUCTS",
     "urunlerimiz_desc": "You have reached the quality page. We are at your service with our off-the-shelf ready products and R&D products.",
     "sertifika-ve-patentler": "CERTIFICATES & PATENTS\nBRANDS",
     "referanslar": "REFERENCES",
@@ -50,7 +52,9 @@
     "model-kutuphanesi": "MODEL LIBRARY",
     "video-kutuphanesi": "VIDEO LIBRARY",
     "video_kutuphanesi_desc": "Visualize technology: Leverage the power of our animation, simulation, and digital twin applications for your products and services.",
-    "bayiliklerimiz": "DEALERSHIPS"
+    "bayiliklerimiz": "DEALERSHIPS",
+    "bayiliklerimiz_title_1": "OUR ",
+    "bayiliklerimiz_title_2": "DEALERSHIPS"
   },
   "seo": {
     "default_title": "Volinor | Advanced Technology Solutions",

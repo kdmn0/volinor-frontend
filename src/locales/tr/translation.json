@@ -43,6 +43,8 @@
   "pages": {
     "hakkimizda": "HAKKIMIZDA",
     "urunlerimiz": "ÜRÜNLERİMİZ",
+    "urunlerimiz_title_1": "ÜRÜN",
+    "urunlerimiz_title_2": "LERİMİZ",
     "urunlerimiz_desc": "Kalite sayfasına ulaştınız. Off the shelf hazır ürünlerimiz ve ar-ge ürünleri ile hizmetinizdeyiz.",
     "sertifika-ve-patentler": "SERTİFİKA VE PATENTLERİMİZ\nMARKALARIMIZ",
     "referanslar": "REFERANSLAR",
@@ -50,7 +52,9 @@
     "model-kutuphanesi": "MODEL KÜTÜPHANESİ",
     "video-kutuphanesi": "VİDEO KÜTÜPHANESİ",
     "video_kutuphanesi_desc": "Teknolojiyi görselleştirin: Ürün ve hizmetleriniz için animasyon, simülasyon ve dijital ikiz uygulamalarımızın gücünden faydalanın",
-    "bayiliklerimiz": "BAYİLİKLERİMİZ"
+    "bayiliklerimiz": "BAYİLİKLERİMİZ",
+    "bayiliklerimiz_title_1": "BAYİ",
+    "bayiliklerimiz_title_2": "LİKLERİMİZ"
   },
   "seo": {
     "default_title": "Volinor | İleri Teknoloji Çözümleri",
@@ -85,7 +89,7 @@
   "ui": {
     "menu": "MENÜ",
     "back_to_menu": "MENÜYE DÖN",
-    "view_detail": "DETAYLI GÖRÜNTÜLE",
+    "view_detail": "DETAYLARI GÖRÜNTÜLE",
     "loading": "YÜKLENİYOR"
   },
   "about": {

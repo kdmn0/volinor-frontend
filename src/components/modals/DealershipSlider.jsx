@@ -59,7 +59,7 @@ export const DealershipSlider = () => {
       <div className="relative z-20 flex justify-between items-start mb-8 md:mb-0 mt-4 md:mt-0">
         <div>
           <h1 className="text-3xl md:text-5xl font-display font-light tracking-[0.25em] md:tracking-[0.3em] uppercase drop-shadow-md">
-            <span className="text-white">BAYİ</span><span className="text-[#ffb800]">LİKLERİMİZ</span>
+            <span className="text-white">{t("pages.bayiliklerimiz_title_1")}</span><span className="text-[#ffb800]">{t("pages.bayiliklerimiz_title_2")}</span>
           </h1>
         </div>
         {/* 3x3 dot grid icon */}

@@ -44,7 +44,7 @@ export const DealershipSlider = () => {
   const currentItem = dealerships[currentIndex];
 
   return (
-    <div className="relative w-full min-h-[600px] h-[75vh] bg-transparent flex flex-col pt-8 md:pt-12 px-4 md:px-12 lg:px-24 select-none border border-white/5 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent">
+    <div className="relative w-full min-h-[600px] h-auto md:h-[75vh] pb-24 md:pb-0 bg-transparent flex flex-col pt-8 md:pt-12 px-4 md:px-12 lg:px-24 select-none border border-white/5 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent">
       
       {/* BACKGROUND DECORATIONS */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden rounded-2xl">

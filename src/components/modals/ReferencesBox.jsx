@@ -40,7 +40,7 @@ export const ReferencesBox = () => {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex w-full h-full relative mt-8 items-center justify-center z-20">
+      <div className="flex-1 flex w-full h-full relative mt-4 md:mt-8 pb-12 md:pb-24 items-center justify-center z-20">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:gap-16 items-center justify-items-center w-full max-w-5xl">
           {References.map((ref, index) => (
             <motion.div

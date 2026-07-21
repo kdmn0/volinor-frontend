@@ -41,7 +41,11 @@ export const RouteManager = () => {
       setActivePage('video-kutuphanesi');
     } else if (path === '/' || path === '/auth') {
       setSelectedPart(null);
-      setActivePage(null);
+      if (location.state?.activePage) {
+        setActivePage(location.state.activePage);
+      } else {
+        setActivePage(null);
+      }
     }
   }, [location.pathname, setActivePage, setSelectedPart]);
 

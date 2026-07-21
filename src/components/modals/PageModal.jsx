@@ -461,6 +461,40 @@ export const PageModal = ({ activePage, setActivePage, setIsNavOpen }) => {
                   <DealershipSlider />
                 </div>
               )}
+              {activePage === "model-kutuphanesi" && (
+                <div className="flex flex-col items-start gap-6 mt-4">
+                  <div className="mb-2">
+                    <h1 className="text-3xl md:text-5xl font-display font-light tracking-[0.25em] md:tracking-[0.3em] uppercase drop-shadow-md">
+                      <span className="text-white">MODEL </span><span className="text-[#ffb800]">KÜTÜPHANESİ</span>
+                    </h1>
+                    <p className="text-white/40 text-[10px] md:text-xs tracking-[0.35em] mt-2 font-medium">
+                      3D MODELLER VE SİMÜLASYONLAR
+                    </p>
+                  </div>
+                  
+                  <p className="text-white/70 text-sm md:text-base font-light max-w-2xl leading-relaxed">
+                    {t("pages.model_kutuphanesi_desc", "Geniş 3D model kütüphanemizi keşfedin, detaylı incelemeler ve simülasyonlar için kütüphanemize göz atın.")}
+                  </p>
+
+                  <button 
+                    onClick={() => navigate("/model-kutuphanesi")}
+                    className="group mt-4 relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#ffb800]/10 border border-[#ffb800]/30 hover:bg-[#ffb800]/20 hover:border-[#ffb800]/60 transition-all duration-300 rounded-lg overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#ffb800]/0 via-[#ffb800]/10 to-[#ffb800]/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <span className="relative font-display font-semibold tracking-[0.2em] text-[#ffb800] text-sm">
+                      KÜTÜPHANEYE GİT
+                    </span>
+                    <svg 
+                      className="relative w-5 h-5 text-[#ffb800] group-hover:translate-x-1 transition-transform" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </button>
+                </div>
+              )}
               {activePage === "video-kutuphanesi" && (
                 <div className="mt-8">
                   <VideoLibrary />

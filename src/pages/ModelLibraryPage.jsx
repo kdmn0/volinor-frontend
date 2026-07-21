@@ -88,7 +88,7 @@ export const ModelLibraryPage = () => {
       <header className="sticky top-0 z-50 h-16 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 px-6">
         <div className="max-w-[1600px] mx-auto h-full flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium tracking-widest text-white/50 hover:text-[#ffb800] transition-colors group">
+            <Link to="/" state={{ activePage: "model-kutuphanesi" }} className="flex items-center gap-2 text-sm font-medium tracking-widest text-white/50 hover:text-[#ffb800] transition-colors group">
               <ArrowLeftIcon className="group-hover:-translate-x-1 transition-transform" />
               ANA SAYFA
             </Link>
